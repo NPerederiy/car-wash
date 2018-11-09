@@ -30,13 +30,13 @@ namespace CarWash.Controllers
         }
 
         [HttpGet, Route("awailable-days")]
-        public IEnumerable<DateTime> GetAwailableDays(GetAwailableDaysRequest request)
+        public IEnumerable<DateTime> GetAwailableDays([FromQuery]GetAwailableDaysRequest request)
         {
              return _sheduleService.GetAwailableDays(request);
         }
 
         [HttpGet, Route("day-shedule")]
-        public GetSheduleForDayResponse GetSheduleForDay(GetSheduleForDayRequest request)
+        public GetSheduleForDayResponse GetSheduleForDay([FromQuery]GetSheduleForDayRequest request)
         {
             return new GetSheduleForDayResponse
             {
