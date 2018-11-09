@@ -6,7 +6,7 @@ using CarWash.Models;
 
 namespace CarWash.Services
 {
-    public class SheduleService : ISheduleService
+    public class ScheduleService : IScheduleService
     {
         public IEnumerable<WashOption> GetWashOptions()
         {
@@ -73,9 +73,9 @@ namespace CarWash.Services
             return days;
         }
 
-        public IEnumerable<BoxShedule> GetSheduleForDay(GetSheduleForDayRequest request)
+        public IEnumerable<BoxSchedule> GetSheduleForDay(GetScheduleForDayRequest request)
         {
-            var shedules = new List<BoxShedule>();
+            var shedules = new List<BoxSchedule>();
             var startTime = new DateTime(request.Date.Year, request.Date.Month, request.Date.Day, 9, 0, 0);
             var endTime = new DateTime(request.Date.Year, request.Date.Month, request.Date.Day, 18, 0, 0);
             var random = new Random();
@@ -85,7 +85,7 @@ namespace CarWash.Services
                 {
                     var nextValue = random.Next(5000);
                     var employeeID = random.Next(10);
-                    var boxShedule = new BoxShedule
+                    var boxShedule = new BoxSchedule
                     {
                         BoxID = boxID,
                         Day = request.Date,

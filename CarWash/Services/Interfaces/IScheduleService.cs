@@ -4,12 +4,12 @@ using CarWash.Models;
 
 namespace CarWash.Services
 {
-    public interface ISheduleService
+    public interface IScheduleService
     {
         IEnumerable<WashOption> GetWashOptions();
 
         IEnumerable<DateTime> GetAwailableDays(GetAwailableDaysRequest request);
 
-        IEnumerable<BoxShedule> GetSheduleForDay(GetSheduleForDayRequest request);
+        IEnumerable<BoxSchedule> GetSheduleForDay(GetScheduleForDayRequest request);
     }
 }

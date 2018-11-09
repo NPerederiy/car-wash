@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace CarWash.Models
 {
-    public class GetSheduleForDayResponse
+    public class GetScheduleForDayResponse
     {
-        public IEnumerable<BoxShedule> BoxShedules { get; set; }
+        public IEnumerable<BoxSchedule> BoxShedules { get; set; }
     }
 }
