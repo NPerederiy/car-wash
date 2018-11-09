@@ -13,11 +13,11 @@ namespace CarWash.Controllers
     [ApiController]
     public class SheduleController : ControllerBase
     {
-        private SheduleService _sheduleService;
+        private ISheduleService _sheduleService;
 
-        public SheduleController()
+        public SheduleController(ISheduleService sheduleService)
         {
-            _sheduleService = new SheduleService();
+            _sheduleService = sheduleService;
         }
 
         [HttpGet, Route("options")]

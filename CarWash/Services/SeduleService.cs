@@ -6,7 +6,7 @@ using CarWash.Models;
 
 namespace CarWash.Services
 {
-    public class SheduleService
+    public class SheduleService : ISheduleService
     {
         public IEnumerable<WashOption> GetWashOptions()
         {
