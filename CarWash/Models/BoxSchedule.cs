@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace CarWash.Models
 {
-    public class BoxShedule
+    public class BoxSchedule
     {
         public int BoxID { get; set; }
         public int EmployeeID { get; set; }

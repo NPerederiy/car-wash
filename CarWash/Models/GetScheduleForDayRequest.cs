@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace CarWash.Models
 {
-    public class GetSheduleForDayRequest
+    public class GetScheduleForDayRequest
     {
         public IEnumerable<WashOption> WashOptions { get; set; }
         public DateTime Date { get; set; }
