@@ -1,21 +1,69 @@
-﻿const uri = "api/values";
-let todos = null;
-function getCount(data) {
-  const el = $("#counter");
-  let name = "to-do";
-  if (data) {
-    if (data > 1) {
-      name = "to-dos";
-    }
-    el.text(data + " " + name);
-  } else {
-    el.text("No " + name);
-  }
-}
+﻿const dayName = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wendesday",
+    "Thursday",
+    "Friday",
+    "Saturday"
+];
+
+const monthName = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+];
+
+const urls = {
+    optionsUrl: "api/schedule/options"
+};
+
+const uriShedule = "";
+var options;
+
+var selectedDay;
+var selectedOptions;
+
+
+//function getCount(data) {
+//  const el = $("#counter");
+//  let name = "to-do";
+//  if (data) {
+//    if (data > 1) {
+//      name = "to-dos";
+//    }
+//    el.text(data + " " + name);
+//  } else {
+//    el.text("No " + name);
+//  }
+//}
 
 $(document).ready(function() {
-  getData();
+  //getData();
 });
+
+$(".shedule").click(function (event) {
+    $(".day").css({ backgroundColor: "#ffffff" });
+    event.stopPropagation();
+});
+
+function selectDay(sender) {
+    event.stopPropagation();
+    console.log($(".day"));
+    $(".day").css({ backgroundColor: "#ffffff" });
+    $(sender).css({ backgroundColor: "#cccccc" });
+    console.log(sender);
+    selectedDay = $(sender).html().toString().substring;
+}
 
 function getData() {
   $.ajax({
@@ -131,4 +179,93 @@ $(".my-form").on("submit", function() {
 
 function closeInput() {
   $("#spoiler").css({ display: "none" });
+}
+
+function changeServices() {
+    $.ajax({
+        type: "GET",
+        url: urls.optionsUrl,
+        cache: false,
+        success: function (data) {
+            const div = $("#services");
+
+            options = data;
+            console.log(options);
+
+            $(div).empty();
+
+            getCount(data.length);
+
+            $.each(data, function (key, item) {
+                const inner = $("<li>")
+                    .append(
+                        $("<input/>", {
+                            type: "checkbox",
+                            checked: false
+                        })
+                    )
+                    .append(item.OptionDescription)
+                    .append(item.OptionPrice)
+                    .append("</li>");
+            });
+
+            inner.appendTo(div);
+        }
+    });
+}
+
+function changeCalendar() {
+    var year = 0;
+    var month;
+
+    var now = new Date();   // Визначуваний поточну дату.
+    now.setDate(1);   // Встановлюємо в змінній перше число поточного місяця.
+
+    var dayOfWeek = now.getDay();   //Определяем день тижня.
+
+    var currentMonth = now.getMonth();   // Дізнаємося місяць.
+
+    now = new Date();   // Одержуємо дату.
+    var today = now.getDate();   // Дізнаємося число.
+
+    var daysInMonth = 28;   // Встановлюємо мінімально можливе число днів в місяці (менше не буває).
+    while (currentMonth === now.getMonth())   // Перевіряємо в циклі, чи не змінився місяць при спробі встановити неможливе число.
+        now.setDate(++daysInMonth);   // Збільшуємо число.
+    --daysInMonth;//Получаем коректне число днів в місяці.
+
+    var html = $("#calendar").html();
+
+    let count = 0;
+    let offset = 6;
+
+    now = new Date();
+
+    for (i = today; i <= daysInMonth; i++) {
+        html += `\n<tr>`;
+        now.setDate(i);
+        if (i === today) {
+            html += `\n<td class="day today" onclick="selectDay(this)">${dayName[now.getDay()]}<br>${now.getDate()}.${now.getMonth() + 1}.${now.getFullYear()}</td><td class="dayShedule"><div class="shedule"></div></td>`;
+        }
+        else {
+            html += `\n<td class="day" onclick="selectDay(this)">${dayName[now.getDay()]} <br>${now.getDate()}.${now.getMonth() + 1}.${now.getFullYear()}</td><td class="dayShedule"><div class="shedule"></div></td>`;
+        }
+        count++;
+        html += `\n</tr>`;
+        if (count > offset) {
+            break;
+        }
+    }
+    for (i = 1; i < offset - (daysInMonth - today); i++) {
+        html += `\n<tr>`;
+        now.setMonth(currentMonth + 1 > 11 ? 0 : currentMonth + 1);
+        now.setDate(i);
+        html += `\n<td class="day" onclick="selectDay(this)"> ${dayName[now.getDay()]} <br>${now.getDate()}.${now.getMonth() + 1}.${now.getFullYear()}</td><td class="dayShedule"><div class="shedule"></div></td>`;
+        count++;
+        html += `\n</tr>`;
+        if (count > offset) {
+            break;
+        }
+    }
+
+    $("#calendar").html(html);
 }
