@@ -11,13 +11,13 @@ namespace CarWash.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SheduleController : ControllerBase
+    public class ScheduleController : ControllerBase
     {
-        private SheduleService _sheduleService;
+        private IScheduleService _scheduleService;
 
-        public SheduleController()
+        public ScheduleController(IScheduleService scheduleService)
         {
-            _sheduleService = new SheduleService();
+            _scheduleService = scheduleService;
         }
 
         [HttpGet, Route("options")]
@@ -25,22 +25,22 @@ namespace CarWash.Controllers
         {
             return new GetWashOptionsResponse
             {
-                WashOptions = _sheduleService.GetWashOptions()
+                WashOptions = _scheduleService.GetWashOptions()
             };
         }
 
         [HttpGet, Route("awailable-days")]
-        public IEnumerable<DateTime> GetAwailableDays(GetAwailableDaysRequest request)
+        public IEnumerable<DateTime> GetAwailableDays([FromQuery]GetAwailableDaysRequest request)
         {
-             return _sheduleService.GetAwailableDays(request);
+             return _scheduleService.GetAwailableDays(request);
         }
 
         [HttpGet, Route("day-shedule")]
-        public GetSheduleForDayResponse GetSheduleForDay(GetSheduleForDayRequest request)
+        public GetScheduleForDayResponse GetSheduleForDay([FromQuery]GetScheduleForDayRequest request)
         {
-            return new GetSheduleForDayResponse
+            return new GetScheduleForDayResponse
             {
-                BoxShedules = _sheduleService.GetSheduleForDay(request)
+                BoxShedules = _scheduleService.GetSheduleForDay(request)
             };
         }
 
