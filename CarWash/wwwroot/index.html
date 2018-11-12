@@ -59,6 +59,8 @@
         }
         .mainTable td.serviceList {
             vertical-align: top;
+            padding-right: 10px;
+            padding-bottom: 20px;
         }
         .mainTable td.day {
             padding: 0px;
@@ -66,18 +68,18 @@
             border-right: 0px;
             border-radius: 10px 10px 10px 10px;
         }
-        .mainTable td.dayShedule {
+        .mainTable td.dayschedule {
             padding: 0;
             border: 0px;
         }
-        .mainTable div.shedule {
+        .mainTable div.schedule {
             width: 100%;
             height: 100%;
             padding: 0px;
             border: 0px;
         }   
         .serviceList {
-            width: 30%;
+            width: 20%;
             border: 3px solid black;
             border-radius: 10px; 
             position: relative;
@@ -85,14 +87,26 @@
         .serviceList li {
             list-style-type: none;
         }
-        .shedule {
+        /*.serviceList div.tooltip {
+            display: flex;
+            flex-direction: row;
+            padding: 10px;
+            border-radius: 10px;
+            background-color: rgba(0, 0, 0, 0.6);
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
+            color: white;
+        }*/
+        .schedule {
             width: 80%;
             border: 3px solid black;
             border-radius: 10px;
             padding-right: 10px;
             padding-bottom: 20px;
         }
-        table.shedule {
+        table.schedule {
             width: 100%;
             height: 100%;
             padding: 0px;
@@ -111,7 +125,7 @@
             color: darkseagreen;
             padding: 0px;
         }
-        .dayShedule {
+        .dayschedule {
 
         }
 
@@ -121,7 +135,7 @@
         }
     </style>
 </head>
-<body onload="changeServices(); changeCalendar();" style="position: absolute; top: 0; right: 0; bottom: 0; left: 0;">
+<body style="position: absolute; top: 0; right: 0; bottom: 0; left: 0;">
     <header>
         <img class="logo" src="src\donut-logo.png"/> 
         <h1 class="title">DoNuts Car Wash</h1>
@@ -132,24 +146,15 @@
                 <tbody>
                     <tr>
                         <td class="serviceList">
-                            <ul id="services">
-                                <li>
-                                    <input type="checkbox" /> Протереть окна
-                                </li>
-                                <li>
-                                    <input type="checkbox" /> Отмыть машину красивой девушкой
-                                </li>
-                                <li>
-                                    <input type="checkbox" /> Отскрести бабку с капота
-                                </li>
-                            </ul>
+                            <!--<div class="tooltip" id="serviceTooltip"></div>-->
+                            <ul id="services"></ul>
                             <div id="total">
                                 Total: 
                             </div>
                         </td>
-                        <td class="shedule">
-                            <table class="shedule" style="border: 1px solid black;">
-                                <tbody id="calendar" class="shedule"></tbody>
+                        <td class="schedule">
+                            <table class="schedule" style="border: 1px solid black;">
+                                <tbody id="calendar" class="schedule"></tbody>
                             </table>
                         </td>
                     </tr>
