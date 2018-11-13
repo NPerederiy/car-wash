@@ -30,14 +30,25 @@ namespace CarWash.Controllers
         }
 
         [HttpGet, Route("awailable-days")]
-        public IEnumerable<DateTime> GetAwailableDays([FromQuery]GetAwailableDaysRequest request)
+        //public IEnumerable<DateTime> GetAwailableDays([FromQuery]GetAwailableDaysRequest request)
+        public IEnumerable<DateTime> GetAwailableDays([FromQuery(Name = "id")]List<int> id)
         {
-             return _scheduleService.GetAwailableDays(request);
+            GetAwailableDaysRequest request = new GetAwailableDaysRequest()
+            {
+                WashOptions = _scheduleService.GetWashOptions().Where((e) => id.IndexOf(e.OptionID) != -1)
+            };
+            return _scheduleService.GetAwailableDays(request);
         }
 
         [HttpGet, Route("day-shedule")]
-        public GetScheduleForDayResponse GetSheduleForDay([FromQuery]GetScheduleForDayRequest request)
+        //public GetScheduleForDayResponse GetSheduleForDay([FromQuery]GetScheduleForDayRequest request)
+        public GetScheduleForDayResponse GetSheduleForDay([FromQuery(Name = "id")]List<int> id, [FromQuery(Name = "date")] string date)
         {
+            GetScheduleForDayRequest request = new GetScheduleForDayRequest()
+            {
+                WashOptions = _scheduleService.GetWashOptions().Where((e) => id.IndexOf(e.OptionID) != -1),
+                Date = DateTime.ParseExact(date, "ddmmyyyy", System.Globalization.CultureInfo.InvariantCulture)
+            };
             return new GetScheduleForDayResponse
             {
                 BoxShedules = _scheduleService.GetSheduleForDay(request)

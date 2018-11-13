@@ -1,4 +1,4 @@
-﻿const NO_API_WORK = false;
+﻿const NO_API_WORK = true;
 
 
 const dayName = [
@@ -176,24 +176,25 @@ function changeCalendar() {
 }
 
 function getAvailableDay(sender, event) {
-    //var request = "?{[";
-    var request = {};
-    request.WashOptions = [];
+    var request = "?";
+    //var request = {};
+    //request.WashOptions = [];
     for (i = 0; i <= selectedOptions.length; i++) {
         if (options[selectedOptions[i]] != undefined) {
             //request += `${JSON.stringify(options[selectedOptions[i]])},`;
-            request.WashOptions.push(options[selectedOptions[i]]);
+            request += `id=${selectedOptions[i]}&`;
         }
     }
-    //request = request.substr(0, request.length - 1);
+    request = request.substr(0, request.length - 1);
     //request += "]}";
-    console.log(JSON.stringify(request));
+    //console.log(JSON.stringify(request));
+    console.log(urls.availableDaysUrl + request);
     $.ajax({
         type: "GET",
-        url: urls.availableDaysUrl,
+        url: urls.availableDaysUrl + request,
         cache: false,
-        contentType: "application/json",
-        data: JSON.stringify(request),
+        //contentType: "application/json",
+        //data: JSON.stringify(request),
         error: function (jqXHR, textStatus, errorThrown) {
             alert("Something went wrong!");
             console.log(jqXHR);
@@ -211,19 +212,20 @@ function geteDaySchedule(sender, event) {
     if (selectedDay == undefined) {
         selectedDay = Date.now();
     }
-    var request = {};
-    request.WashOptions = [];
-    for (i = 0; i < selectedOptions.length; i++) {
-        request.WashOptions.push(options[i]);
+
+    var request = "?";
+    for (i = 0; i <= selectedOptions.length; i++) {
+        if (options[selectedOptions[i]] != undefined) {
+            request += `id=${selectedOptions[i]}&`;
+        }
     }
-    request.Date = selectedDay;
-    console.log(JSON.stringify(request));
+    request += `date=${selectedDay.getDate().toString().length < 2 ? "0" + selectedDay.getDate().toString() : selectedDay.getDate().toString()}${selectedDay.getMonth().toString().length < 2 ? "0" + selectedDay.getMonth().toString() : selectedDay.getMonth().toString()}${selectedDay.getFullYear()}`;
+    //request = request.substr(0, request.length - 1);
+    console.log(urls.dayScheduleUrl + request);
     $.ajax({
         type: "GET",
-        url: urls.availableDaysUrl,
+        url: urls.dayScheduleUrl + request,
         cache: false,
-        contentType: "application/json",
-        data: JSON.stringify(request),
         error: function (jqXHR, textStatus, errorThrown) {
             alert("Something went wrong!");
             console.log(jqXHR);
