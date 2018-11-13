@@ -13,11 +13,26 @@
     </header>
     <div class="main">
         <form class="mainForm">
-            <table class="mainTable">
+            <div class="serviceList">
+                <ul id="services">
+
+                </ul>
+                <div id="total">
+                    Total:
+                </div>
+            </div>
+            <div class="schedule">
+                <table class="schedule" style="border: 1px solid black;">
+                    <tbody id="calendar" class="schedule">
+
+                    </tbody>
+                </table>
+            </div>
+            <!--<table class="mainTable">
                 <tbody>
                     <tr>
                         <td class="serviceList">
-                            <!--<div class="tooltip" id="serviceTooltip"></div>-->
+                            <div class="tooltip" id="serviceTooltip"></div>
                             <ul id="services"></ul>
                             <div id="total">
                                 Total: 
@@ -30,7 +45,7 @@
                         </td>
                     </tr>
                 </tbody>
-            </table>
+            </table>-->
             <!--<input style="display: block" type="submit" value="Add">-->
         </form>
     </div>
