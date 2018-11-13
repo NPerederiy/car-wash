@@ -81,7 +81,7 @@ namespace CarWash.Services
             var random = new Random();
             for (var boxID = 0; boxID < 4; boxID++)
             {
-                for(var time = startTime; time <= endTime; time.AddMinutes(30))
+                for(var time = startTime; time <= endTime; time = time.AddMinutes(30))
                 {
                     var nextValue = random.Next(5000);
                     var employeeID = random.Next(10);

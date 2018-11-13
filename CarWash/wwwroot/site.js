@@ -208,7 +208,7 @@ function getAvailableDay(sender, event) {
     });
 }
 
-function geteDaySchedule(sender, event) {
+function getDaySchedule(sender, event) {
     if (selectedDay == undefined) {
         selectedDay = Date.now();
     }
@@ -219,7 +219,7 @@ function geteDaySchedule(sender, event) {
             request += `id=${selectedOptions[i]}&`;
         }
     }
-    request += `date=${selectedDay.getDate().toString().length < 2 ? "0" + selectedDay.getDate().toString() : selectedDay.getDate().toString()}${selectedDay.getMonth().toString().length < 2 ? "0" + selectedDay.getMonth().toString() : selectedDay.getMonth().toString()}${selectedDay.getFullYear()}`;
+    request += `date=${selectedDay.getDate().toString().length < 2 ? "0" + selectedDay.getDate().toString() : selectedDay.getDate().toString()}.${selectedDay.getMonth().toString().length < 2 ? "0" + selectedDay.getMonth().toString() : selectedDay.getMonth().toString()}.${selectedDay.getFullYear()}`;
     //request = request.substr(0, request.length - 1);
     console.log(urls.dayScheduleUrl + request);
     $.ajax({

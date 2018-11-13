@@ -47,7 +47,7 @@ namespace CarWash.Controllers
             GetScheduleForDayRequest request = new GetScheduleForDayRequest()
             {
                 WashOptions = _scheduleService.GetWashOptions().Where((e) => id.IndexOf(e.OptionID) != -1),
-                Date = DateTime.ParseExact(date, "ddmmyyyy", System.Globalization.CultureInfo.InvariantCulture)
+                Date = DateTime.ParseExact(date, "dd.mm.yyyy", System.Globalization.CultureInfo.InvariantCulture)
             };
             return new GetScheduleForDayResponse
             {
