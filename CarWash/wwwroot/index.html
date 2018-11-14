@@ -2,67 +2,57 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>To-do CRUD</title>
-    <style>
-        input[type='submit'], button, [aria-label] {
-            cursor: pointer;
-        }
-
-        #spoiler {
-            display: none;
-        }
-
-        table {
-            font-family: Arial, sans-serif;
-            border: 1px solid;
-            border-collapse: collapse;
-        }
-
-        th {
-            background-color: #0066CC;
-            color: white;
-        }
-
-        td {
-            border: 1px solid;
-            padding: 5px;
-        }
-    </style>
+    <title>DoNuts Car Wash</title>
+    <link rel="stylesheet" href="main.css">
+        
 </head>
-<body>
-    <h1>To-do CRUD</h1>
-    <h3>Add</h3>
-    <form action="javascript:void(0);" method="POST" onsubmit="addItem()">
-        <input type="text" id="add-name" placeholder="New to-do">
-        <input type="submit" value="Add">
-    </form>
+<body style="position: absolute; top: 0; right: 0; bottom: 0; left: 0;">
+    <header>
+        <img class="logo" src="src\donut-logo.png"/> 
+        <h1 class="title">DoNuts Car Wash</h1>
+    </header>
+    <div class="main">
+        <form class="mainForm">
+            <div class="serviceList">
+                <ul id="services">
 
-    <div id="spoiler">
-        <h3>Edit</h3>
-        <form class="my-form">
-            <input type="hidden" id="edit-id">
-            <input type="checkbox" id="edit-isComplete">
-            <input type="text" id="edit-name">
-            <input type="submit" value="Edit">
-            <a onclick="closeInput()" aria-label="Close">&#10006;</a>
+                </ul>
+                <div id="total">
+                    Total:
+                </div>
+            </div>
+            <div class="schedule">
+                <table class="schedule" style="border: 1px solid black;">
+                    <tbody id="calendar" class="schedule">
+
+                    </tbody>
+                </table>
+            </div>
+            <!--<table class="mainTable">
+                <tbody>
+                    <tr>
+                        <td class="serviceList">
+                            <div class="tooltip" id="serviceTooltip"></div>
+                            <ul id="services"></ul>
+                            <div id="total">
+                                Total: 
+                            </div>
+                        </td>
+                        <td class="schedule">
+                            <table class="schedule" style="border: 1px solid black;">
+                                <tbody id="calendar" class="schedule"></tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>-->
+            <!--<input style="display: block" type="submit" value="Add">-->
         </form>
     </div>
-
-    <p id="counter"></p>
-
-    <table>
-        <tr>
-            <th>Is Complete</th>
-            <th>Name</th>
-            <th></th>
-            <th></th>
-        </tr>
-        <tbody id="todos"></tbody>
-    </table>
-
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"
             integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
             crossorigin="anonymous"></script>
     <script src="site.js"></script>
+    <footer></footer>
 </body>
 </html>
