@@ -1,4 +1,4 @@
-﻿const NO_API_WORK = true;
+﻿const NO_API_WORK = false;
 
 
 const dayName = [
@@ -52,7 +52,6 @@ $(".schedule").click(function (event) {
     selectedDay = undefined;
 });
 
-
 function serviceMouseOver(sender, event) {
     event.stopPropagation();
     if (hoveredOption !== $(sender).attr("id")) {
@@ -63,6 +62,7 @@ function serviceMouseOver(sender, event) {
         //console.log(options);
 
         $(`#data_${id}`).html(`<div style="margin-left: 30px;">Price: ${options[id].price}<br>Time: ${options[id].time}</div>`);
+        getDaySchedule();
     }
 }
 
@@ -87,6 +87,9 @@ function changeServices() {
                 $.each(item, function (itemKey, value) {
                     options[value.optionID] = value;
                     inner += `<li><div><div id = "service_${value.optionID}" class = "checkbox" onclick="optionToggle(this);">+</div> <div id = "descr_${value.optionID}" class = "descr" onmouseover="serviceMouseOver(this, event);" onmouseout="serviceMouseOut(this, event)">${value.optionDescription}</div></div><div id = "data_${value.optionID}" class = "data"></div></li>`;
+                });
+                $('.checkbox, .descr').on('click', function () {
+                    getDaySchedule();
                 });
             });
 
@@ -212,6 +215,9 @@ function getDaySchedule(sender, event) {
     if (selectedDay == undefined) {
         selectedDay = Date.now();
     }
+    else {
+        selectedDay = new Date(selectedDay);
+    }
 
     var request = "?";
     for (i = 0; i <= selectedOptions.length; i++) {
@@ -280,73 +286,3 @@ function optionToggle(sender) {
     total.html(`Total: ${totalPrice.toFixed(1)}$ - ${totalTime.toFixed(1)} min`);
     //console.log(selectedOptions);
 }
-
-
-//function addItem() {
-//    const item = {
-//        name: $("#add-name").val(),
-//        isComplete: false
-//    };
-
-//    $.ajax({
-//        type: "POST",
-//        accepts: "application/json",
-//        url: uri,
-//        contentType: "application/json",
-//        data: JSON.stringify(item),
-//        error: function (jqXHR, textStatus, errorThrown) {
-//            alert("Something went wrong!");
-//        },
-//        success: function (result) {
-//            getData();
-//            $("#add-name").val("");
-//        }
-//    });
-//}
-
-//function deleteItem(id) {
-//    $.ajax({
-//        url: uri + "/" + id,
-//        type: "DELETE",
-//        success: function (result) {
-//            getData();
-//        }
-//    });
-//}
-
-//function editItem(id) {
-//    $.each(todos, function (key, item) {
-//        if (item.id === id) {
-//            $("#edit-name").val(item.name);
-//            $("#edit-id").val(item.id);
-//            $("#edit-isComplete")[0].checked = item.isComplete;
-//        }
-//    });
-//    $("#spoiler").css({ display: "block" });
-//}
-
-//$(".my-form").on("submit", function () {
-//    const item = {
-//        name: $("#edit-name").val(),
-//        isComplete: $("#edit-isComplete").is(":checked"),
-//        id: $("#edit-id").val()
-//    };
-
-//    $.ajax({
-//        url: uri + "/" + $("#edit-id").val(),
-//        type: "PUT",
-//        accepts: "application/json",
-//        contentType: "application/json",
-//        data: JSON.stringify(item),
-//        success: function (result) {
-//            getData();
-//        }
-//    });
-
-//    closeInput();
-//    return false;
-//});
-
-//function closeInput() {
-//    $("#spoiler").css({ display: "none" });
-//}
