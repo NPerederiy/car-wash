@@ -10,6 +10,6 @@ namespace CarWash.Services
 
         IEnumerable<DateTime> GetAwailableDays(GetAwailableDaysRequest request);
 
-        IEnumerable<BoxSchedule> GetSheduleForDay(GetScheduleForDayRequest request);
+        IEnumerable<Schedule> GetSheduleForDay(GetScheduleForDayRequest request);
     }
 }
