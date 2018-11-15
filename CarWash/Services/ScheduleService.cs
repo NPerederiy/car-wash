@@ -1,13 +1,19 @@
-﻿using System;
+﻿using CarWash.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dapper;
 using System.Threading.Tasks;
-using CarWash.Models;
 
 namespace CarWash.Services
 {
     public class ScheduleService : IScheduleService
     {
+        public ScheduleService()
+        {
+            UpdateDatabase();
+        }
+
         public IEnumerable<WashOption> GetWashOptions()
         {
             return new List<WashOption>
@@ -47,56 +53,163 @@ namespace CarWash.Services
         {
             if (request.WashOptions.Count() <= 0)
                 throw new ArgumentException("At least one option should be specified");
-            var days = new List<DateTime>();
-            var now = DateTime.Now;
-            if(request.WashOptions.Count() == 1)
+
+            using(var context = Utilities.Sql())
             {
-                for(var i = 0; i < 31; i++)
+                var timeRequired = CalculateTime(request.WashOptions);
+
+                var days = context.Query<DateTime>(@"
+                SELECT 
+	                [Date]
+                FROM 
+	                EmployeeSchedule
+                WHERE
+	                DATEDIFF(hour, FreeFrom, FreeTo) >= @requestedTime
+                GROUP BY [Date]
+                ORDER BY [Date]",
+                param: new
                 {
-                    days.Add(new DateTime(now.Year, now.Month, now.Day));
-                }
+                    requestedTime = timeRequired
+                });
+
+                return days ?? new List<DateTime>();
             }
-            else if(request.WashOptions.Count() < 3)
-            {
-                for (var i = 0; i < 31; i+= 2)
-                {
-                    days.Add(new DateTime(now.Year, now.Month, now.Day));
-                }
-            }
-            else 
-            {
-                for (var i = 0; i < 31; i += 5)
-                {
-                    days.Add(new DateTime(now.Year, now.Month, now.Day));
-                }
-            }
-            return days;
         }
 
-        public IEnumerable<BoxSchedule> GetSheduleForDay(GetScheduleForDayRequest request)
+        public IEnumerable<Schedule> GetSheduleForDay(GetScheduleForDayRequest request)
         {
-            var shedules = new List<BoxSchedule>();
-            var startTime = new DateTime(request.Date.Year, request.Date.Month, request.Date.Day, 9, 0, 0);
-            var endTime = new DateTime(request.Date.Year, request.Date.Month, request.Date.Day, 18, 0, 0);
-            var random = new Random();
-            for (var boxID = 0; boxID < 4; boxID++)
+            using(var context = Utilities.Sql())
             {
-                for(var time = startTime; time <= endTime; time = time.AddMinutes(30))
-                {
-                    var nextValue = random.Next(5000);
-                    var employeeID = random.Next(10);
-                    var boxShedule = new BoxSchedule
+                var schedules = context.Query<Schedule>(@"
+                SELECT 
+	                b.BoxID
+	                ,e.EmployeeID
+	                ,b.[Date]
+	                ,b.[Time]
+	                ,b.OrderID
+                FROM
+	                BoxSchedule b
+	                INNER JOIN EmployeeSchedule e
+	                ON b.[Date] = e.[Date]
+	                AND b.[Time] = e.[Time]
+	                AND e.[Date] = @requestedDate",
+                    param: new
                     {
-                        BoxID = boxID,
-                        Day = request.Date,
-                        Time = time,
-                        OrderID = nextValue < 2400 ? nextValue : 0,
-                        EmployeeID = employeeID
-                    };
-                    shedules.Add(boxShedule);
+                        requestedDate = request.Date
+                    });
+
+                return schedules;
+            }
+        }
+
+        private void UpdateDatabase()
+        {
+            try
+            {
+                using (var context = Utilities.Sql())
+                {
+                    var employees = context.Query<Employee>(@"
+                SELECT 
+	                EmployeeID
+                FROM 
+	                Employees");
+
+                    var lastDayEmployee = context.ExecuteScalar<DateTime>(@"
+                SELECT TOP 1
+                    [Date]
+                FROM
+                    EmployeeSchedule
+                ORDER BY [Date] DESC
+                ");
+
+                    var lastDayBox = context.ExecuteScalar<DateTime>(@"
+                SELECT TOP 1
+                    [Date]
+                FROM
+                    EmployeeSchedule
+                ORDER BY [Date] DESC
+                ");
+
+                    lastDayEmployee = lastDayEmployee == default(DateTime) ? DateTime.Now : lastDayEmployee;
+                    lastDayBox = lastDayBox == default(DateTime) ? DateTime.Now : lastDayBox;
+                    var lastDateMustBe = DateTime.Now.AddMonths(1).Date;
+                    if (lastDayBox < lastDateMustBe || lastDayEmployee < lastDateMustBe)
+                    {
+                        var dateDifferenceEmployee = DateTime.Now.AddMonths(1) - lastDayEmployee;
+                        var startFromDateEmployee = DateTime.Now.AddMonths(1).Subtract(dateDifferenceEmployee).AddDays(1);
+
+                        var dateDifferenceBox = DateTime.Now.AddMonths(1) - lastDayBox;
+                        var startFromDateBox = DateTime.Now.AddMonths(1).Subtract(dateDifferenceBox).AddDays(1);
+
+
+                        List<string> boxesString = new List<string>();
+                        boxesString.Add("");
+                        int row = 0, counter = 0;
+                        for (var i = 1; i <= 4; i++)
+                        {
+                            for (var date = startFromDateEmployee; date <= DateTime.Now.AddMonths(1); date = date.AddDays(1))
+                            {
+                                for (var time = new DateTime(2018, 11, 11, 9, 0, 0); time <= new DateTime(2018, 11, 11, 19, 0, 0); time = time.AddMinutes(15))
+                                {
+                                    if (counter++ == 999)
+                                    {
+                                        boxesString[row] = boxesString[row].Trim(',');
+                                        row++;
+                                        boxesString.Add("");
+                                        counter = 0;
+                                    }
+                                    boxesString[row] += $"('{date.ToString("yyyy-MM-dd")}', '{time.ToString("HH:mm")}', '9:00', '18:00', {i}),";
+                                }
+                            }
+                        }
+                        boxesString[row] = boxesString[row].Trim(',');
+                        List<string> employeeString = new List<string>();
+                        employeeString.Add("");
+                        row = counter = 0;
+                        foreach (var employee in employees)
+                        {
+                            for (var date = startFromDateBox; date <= DateTime.Now.AddMonths(1); date = date.AddDays(1))
+                            {
+                                for (var time = new DateTime(2018, 11, 11, 9, 0, 0); time <= new DateTime(2018, 11, 11, 19, 0, 0); time = time.AddMinutes(15))
+                                {
+                                    if (counter++ == 999)
+                                    {
+                                        employeeString[row] = boxesString[row].Trim(',');
+                                        row++;
+                                        employeeString.Add("");
+                                        counter = 0;
+                                    }
+                                    employeeString[row] += $"('{date.ToString("yyyy-MM-dd")}', '{time.ToString("HH:mm")}', '9:00', '18:00', {employee.EmployeeID}),";
+                                }
+                            }
+                        }
+                        employeeString[row] = employeeString[row].Trim(',');
+
+                        foreach (var boxInsertion in boxesString)
+                        {
+                            var boxesScheduleCreated = context.ExecuteScalar<int>($@"
+                    INSERT INTO BoxSchedule([Date],[Time], FreeFrom, FreeTo, BoxID) VALUES
+                    {boxInsertion}");
+                        }
+
+                        foreach (var employeeInsertion in employeeString)
+                        {
+                            var employeesScheduleCreated = context.ExecuteScalar<int>($@"
+                    INSERT INTO EmployeeSchedule([Date],[Time], FreeFrom, FreeTo, EmployeeID) VALUES
+                    {employeeInsertion}");
+                        }
+                    }
                 }
             }
-            return shedules;
+            catch(Exception e)
+            {
+                var a = 6;
+            }
+        }
+
+        private double CalculateTime(IEnumerable<WashOption> options)
+        {
+            return options.Sum(o => o.Time);
         }
     }
 }

@@ -7,6 +7,6 @@ namespace CarWash.Models
 {
     public class GetScheduleForDayResponse
     {
-        public IEnumerable<BoxSchedule> BoxShedules { get; set; }
+        public IEnumerable<Schedule> BoxShedules { get; set; }
     }
 }
