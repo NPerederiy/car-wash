@@ -92,9 +92,9 @@ function changeServices() {
 
             div.html(inner);
         });
+        return;
     }
-    else {
-        $.ajax({
+    $.ajax({
         type: "GET",
         url: urls.optionsUrl,
         cache: false,
@@ -116,7 +116,6 @@ function changeServices() {
             div.html(inner);
         }
     });
-    }
 }
 
 function changeCalendar() {
@@ -176,25 +175,31 @@ function changeCalendar() {
 }
 
 function getAvailableDay(sender, event) {
+    if (NO_API_WORK) {
+        $.getJSON("dates.json", function (data) {
+            var div = $("td.day");
+
+            console.log(data); //Массив дат
+            $.each(data, function (key, item) {
+               //Тут должен быть код на изменение стилей доступных дней 
+            });
+        });
+        return;
+    }
     var request = "?";
-    //var request = {};
-    //request.WashOptions = [];
+
     for (i = 0; i <= selectedOptions.length; i++) {
         if (options[selectedOptions[i]] != undefined) {
-            //request += `${JSON.stringify(options[selectedOptions[i]])},`;
             request += `id=${selectedOptions[i]}&`;
         }
     }
     request = request.substr(0, request.length - 1);
-    //request += "]}";
-    //console.log(JSON.stringify(request));
     console.log(urls.availableDaysUrl + request);
+
     $.ajax({
         type: "GET",
         url: urls.availableDaysUrl + request,
         cache: false,
-        //contentType: "application/json",
-        //data: JSON.stringify(request),
         error: function (jqXHR, textStatus, errorThrown) {
             alert("Something went wrong!");
             console.log(jqXHR);
@@ -209,6 +214,18 @@ function getAvailableDay(sender, event) {
 }
 
 function getDaySchedule(sender, event) {
+    if (NO_API_WORK) {
+        $.getJSON("daySchedule.json", function (data) {
+            var div = $("td.schedule");
+
+            console.log(data);
+            $.each(data, function (key, item) {
+                //Тут должен быть код...
+            });
+        });
+        return;
+    }
+
     if (selectedDay == undefined) {
         selectedDay = Date.now();
     }

@@ -61,6 +61,7 @@ body {
     list-style-type: none;
     display: flex;
     flex-direction: column;
+	cursor: pointer;
     /*user-select: none;*/  
 }
 .serviceList li div{
