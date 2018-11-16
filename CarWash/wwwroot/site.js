@@ -279,7 +279,7 @@ function optionToggle(sender) {
     var id = $(sender).attr("id").substring(8);
     //console.log($(sender));
 
-    var checked = ($(sender).text() == "+" ? true : false);
+    var checked = $(sender).text() == "+" ? true : false;
     console.log(checked);
 
     if (checked) {       
@@ -294,9 +294,9 @@ function optionToggle(sender) {
     else {
         selectedOptions.splice(selectedOptions.indexOf(id), 1);
         $(sender).text("+");
-        totalPrice -= (options[id].price);
+        totalPrice -= options[id].price;
         //totalPrice.toFixed(1);
-        totalTime -= (options[id].time);
+        totalTime -= options[id].time;
         //totalTime.toFixed(1);
     }
 

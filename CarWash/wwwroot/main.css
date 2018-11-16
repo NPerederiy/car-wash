@@ -56,6 +56,8 @@ body {
     padding-bottom: 20px;
 
     background-color: white;
+
+    min-width: 150px;
 }
 .serviceList li {
     list-style-type: none;
@@ -90,6 +92,9 @@ body {
 
     background-color: white;
 }
+div.schedule {
+    min-width: 600px;
+}
 table.schedule {
     width: 100%;
     height: 100%;
@@ -97,6 +102,7 @@ table.schedule {
 }
 table.schedule div {
     border: 0px;
+    min-width: 0px;
 }
 .day {
     width: 90px;
