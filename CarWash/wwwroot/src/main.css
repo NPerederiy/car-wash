@@ -123,35 +123,7 @@ table.schedule div {
     text-align: center;
     height: 14.28%;
     user-select: none;
-    border-radius: 5px;    
-    /*overflow-x: auto;
-    overflow-y: auto;*/
-}
-.day:nth-of-type(7n+2) {
-    border: 0px solid rgba(30, 0, 230, 0.4);
-    color: rgba(30, 0, 230, 0.4);
-}
-.day:nth-of-type(7n+3){
-    border: 0px solid rgba(30, 0, 230, 0.5);
-    color: rgba(30, 0, 230, 0.5);
-}
-.day:nth-of-type(7n+4){
-    border: 0px solid rgba(30, 0, 230, 0.6);
-    color: rgba(30, 0, 230, 0.6);
-}
-.day:nth-of-type(7n+5){
-    border: 0px solid rgba(30, 0, 230, 0.7);
-    color: rgba(30, 0, 230, 0.7);
-}
-.day:nth-of-type(7n+6){
-    border: 0px solid rgba(30, 0, 230, 0.8);
-    color: rgba(30, 0, 230, 0.8);
-}
-.day:nth-of-type(7n+7){
-    border: 0px solid rgba(30, 0, 230, 0.9);
-    color: rgba(30, 0, 230, 0.9);
-}
-.day:nth-of-type(7n+8){
+    border-radius: 5px;
     border: 0px solid rgb(30, 0, 230);
     color: rgb(30, 0, 230);
 }
