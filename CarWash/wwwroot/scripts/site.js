@@ -24,7 +24,6 @@ const monthName = [
     "November",
     "December"
 ];
-
 const colors = {
     daySelected: "rgb(0,206,209)",
     daySelectedText: "#ffffff",
@@ -35,7 +34,6 @@ const colors = {
     today: "#4b0082",
     availableDay: "green"
 };
-
 const urls = {
     optionsUrl: "api/schedule/options",                 //Ничего не передаём
     availableDaysUrl: "api/schedule/awailable-days",    //Передаём список услуг (либо просто id, либо объект, из списка options. Я ещё точно не знаю)
@@ -65,6 +63,7 @@ var selectedDayEl;
 
 var selectedOptions = [];
 
+var selectionAvailable = true;
 
 var totalPrice = 0;
 
@@ -95,7 +94,7 @@ function changeServices() {
             $.each(data, function (key, item) {
                 $.each(item, function (itemKey, value) {
                     options[value.optionID] = value;
-                    inner += `<li><div><div id = "service_${value.optionID}" class = "checkbox" onclick="optionToggle(this);">+</div> <div id = "descr_${value.optionID}" class = "descr">${value.optionDescription}</div></div><div style="margin-left: 30px;">${value.price}$ ${value.time}m</div></li>`;
+                    inner += `<li><div><div id = "service_${value.optionID}" class = "checkbox" onclick="optionToggle(this);">+</div> <div id = "descr_${value.optionID}" class = "descr" onclick="optionToggle('#service_${value.optionID}');" >${value.optionDescription}</div></div><div style="margin-left: 30px;">${value.price}$ ${value.time}m</div></li>`;
                 });
                 $('.checkbox, .descr').on('click', function () {
                     getDaySchedule();
@@ -120,7 +119,7 @@ function changeServices() {
             $.each(data, function (key, item) {
                 $.each(item, function (itemKey, value) {
                     options[value.optionID] = value;
-                    inner += `<li><div><div id = "service_${value.optionID}" class = "checkbox" onclick="optionToggle(this);">+</div> <div id = "descr_${value.optionID}" class = "descr">${value.optionDescription}</div></div><div style="margin-left: 30px;">${options[id].price}$ ${options[id].time}m</div></li>`;
+                    inner += `<li><div><div id = "service_${value.optionID}" class = "checkbox" onclick="optionToggle(this);">+</div> <div id = "descr_${value.optionID}" class = "descr" onclick="optionToggle('#service_${value.optionID}');" >${value.optionDescription}</div></div><div style="margin-left: 30px;">${value.price}$ ${value.time}m</div></li>`;
                 });
             });
 
@@ -191,9 +190,11 @@ function changeCalendar() {
         }
     }
     for (i = 1; i < offset - (daysInMonth - today); i++) {
+        console.log("next month");
         now.setMonth(currentMonth + 1 > 11 ? 0 : currentMonth + 1);
         now.setDate(i);
-        html += `\n<td id="${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()}" class="day">${dayName[now.getDay()]}</td>`;
+        html += `\n<td id="${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()}" class="day">${dayName[now.getDay()]} ${now.getDate()}   </td>`;
+        console.log(html);
         count++;
         if (count > offset) {
             break;
@@ -261,9 +262,17 @@ function getAvailableDay(sender, event) {
         $.getJSON("src/dates.json", function (data) {
             var div = $("td.day");
 
-            console.log(data); //Массив дат
-            $.each(data, function (key, item) {
-               //Тут должен быть код на изменение стилей доступных дней 
+            console.log("Success!");
+            console.log(data);
+
+            $(".day").css({ borderWidth: "0px" });
+            var days = $(".day");
+            $.each(days, function (key, item) {
+                var date = $(item).attr("id").toString().split(".").join("-");
+                date += "T00:00:00";
+                if (data.indexOf(date) != -1) {
+                    $(item).css({ borderColor: $(item).css("color"), borderWidth: "1px" });
+                }
             });
         });
         return;
@@ -335,68 +344,18 @@ function getDaySchedule(sender, event) {
                     var box = $(this).attr("id").substr(0, 4);
                     var id = parseInt($(this).attr("id").substr(4));
 
-                    var enoughSpace = true;
-                    if ($(`#${box}${id + (cells - 1) * 10}`).length <= 0) {
-                        enoughSpace = false;
-                    }
 
                     for (i = 0; i < cells; i++) {
                         console.log($(`#${box}${id + i * 10}`));
-                        if ($(`#${box}${id + i * 10}`).hasClass("free") && enoughSpace) {
-                            try {
-                                var color = $(`#${box}${id + i * 10}`).css("background-color").split(',');
-
-                                var pref = color[0].substr(0, color[0].indexOf('('));
-
-                                color[0] = color[0].substr(color[0].indexOf('(') + 1);
-                                color[1] = parseInt(color[1]) + 50;
-                                color[color.length - 1] = color[color.length - 1].substring(0, color[color.length - 1].length - 1);
-
-                                var nColor = `${pref}(${color[0]}, ${color[1]}, ${color[2]}`;
-
-                                if (color[3] != undefined) {
-                                    nColor += `, ${color[3]})`;
-                                }
-                                else {
-                                    nColor += ")";
-                                }
-
-                                $(`#${box}${id + i * 10}`).css({ backgroundColor: nColor });
-                            }
-                            catch {
-                                console.log();
+                        try {
+                            $(`#${box}${id + i * 10}`).addClass("selected");
+                            if ($(`#${box}${id + i * 10}`).hasClass("busy")) {
+                                selectionAvailable = false;
                             }
                         }
-                        else {
-                            enoughSpace = false;
-
-                            try {
-                                var color = $(`#${box}${id + i * 10}`).css("background-color").split(',');
-
-                                var pref = color[0].substr(0, color[0].indexOf('('));
-
-                                color[0] = color[0].substr(color[0].indexOf('(') + 1);
-                                color[0] = parseInt(color[0]) + 50;
-                                color[color.length - 1] = color[color.length - 1].substring(0, color[color.length - 1].length - 1);
-
-                                var nColor = `${pref}(${color[0]}, ${color[1]}, ${color[2]}`;
-
-                                if (color[3] != undefined) {
-                                    nColor += `, ${color[3]})`;
-                                }
-                                else {
-                                    nColor += ")";
-                                }
-
-                                $(`#${box}${id + i * 10}`).css({ backgroundColor: nColor });
-                            }
-                            catch {
-                                console.log();
-                            }
+                        catch {
+                            console.log("Inccorect index. Probably");
                         }
-                    }
-                    if (enoughSpace) {
-                        //
                     }
                 },
                 function (event) {
@@ -413,62 +372,25 @@ function getDaySchedule(sender, event) {
                     var box = $(this).attr("id").substr(0, 4);
                     var id = parseInt($(this).attr("id").substr(4));
 
-                    var enoughSpace = true;
-                    if ($(`#${box}${id + (cells - 1) * 10}`).length <= 0) {
-                        enoughSpace = false;
-                    }
 
                     for (i = 0; i < cells; i++) {
-                        if ($(`#${box}${id + i * 10}`).hasClass("free") && enoughSpace) {
-                            try {
-                                var color = $(`#${box}${id + i * 10}`).css("background-color").split(',');
-                                var pref = color[0].substr(0, color[0].indexOf('('));
-                                color[0] = color[0].substr(color[0].indexOf('(') + 1);
-                                color[1] = parseInt(color[1]) - 50;
-                                color[color.length - 1] = color[color.length - 1].substring(0, color[color.length - 1].length - 1);
-
-                                var nColor = `${pref}(${color[0]}, ${color[1]}, ${color[2]}`;
-                                if (color[3] != undefined) {
-                                    nColor += `, ${color[3]})`;
-                                }
-                                else {
-                                    nColor += ")";
-                                }
-                                console.log(nColor);
-                                $(`#${box}${id + i * 10}`).css({ backgroundColor: nColor });
-                            }
-                            catch {
-                                console.log();
+                        console.log($(`#${box}${id + i * 10}`));
+                        try {
+                            $(`#${box}${id + i * 10}`).removeClass("selected");
+                            if ($(`#${box}${id + i * 10}`).hasClass("busy")) {
+                                selectionAvailable = true;
                             }
                         }
-                        else {
-                            try {
-                                var color = $(`#${box}${id + i * 10}`).css("background-color").split(',');
-                                var pref = color[0].substr(0, color[0].indexOf('('));
-                                color[0] = color[0].substr(color[0].indexOf('(') + 1);
-                                color[0] = parseInt(color[0]) - 50;
-                                color[color.length - 1] = color[color.length - 1].substring(0, color[color.length - 1].length - 1);
-                                console.log(color);
-
-                                var nColor = `${pref}(${color[0]}, ${color[1]}, ${color[2]}`;
-                                if (color[3] != undefined) {
-                                    nColor += `, ${color[3]})`;
-                                }
-                                else {
-                                    nColor += ")";
-                                }
-                                console.log(nColor);
-                                $(`#${box}${id + i * 10}`).css({ backgroundColor: nColor });
-                            }
-                            catch {
-                                console.log();
-                            }
+                        catch {
+                            console.log("Inccorect index. Probably");
                         }
                     }
                 }
             );
             $(".free").click(function (event) {
                 event.stopPropagation();
+
+                console.log(selectionAvailable);
             });
         });
         return;
@@ -545,7 +467,11 @@ function getDaySchedule(sender, event) {
             );
             $(".free").click(function (event)
             {
+				//console.log("ect");
                 event.stopPropagation();
+				//if (selectionAvailable) {
+				//	$(".registration").css({visibility: "visible"});
+				//}
             });
         }
     });
