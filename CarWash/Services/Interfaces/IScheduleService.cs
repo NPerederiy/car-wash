@@ -11,5 +11,7 @@ namespace CarWash.Services
         IEnumerable<DateTime> GetAwailableDays(GetAwailableDaysRequest request);
 
         IEnumerable<Schedule> GetSheduleForDay(GetScheduleForDayRequest request);
+
+        int CreateOrder(CreateOrderRequest request);
     }
 }
