@@ -10,6 +10,6 @@ namespace CarWash.Models
         public int OptionID { get; set; }
         public string OptionDescription { get; set; }
         public decimal Price { get; set; }
-        public double Time { get; set; }
+        public int Time { get; set; } // In minutes
     }
 }

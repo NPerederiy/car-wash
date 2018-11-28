@@ -240,8 +240,9 @@ function changeCalendar() {
         event.stopPropagation();
 
         $(".day").css({ backgroundColor: colors.dayDeselected, colors: colors.dayDeselectedText });
+        $(".day").removeClass("selected");
         $(this).css({ backgroundColor: colors.daySelected, color: colors.daySelectedText });
-
+        $(this).addClass("selected");
         var date = $(this).attr("id").toString().split('.');
 
         selectedDay = new Date();
@@ -563,12 +564,16 @@ function optionToggle(sender) {
 
         totalPrice += options[id].price;
         totalTime += options[id].time;
+
+        $(sender).addClass("checked");
     }
     else {
         selectedOptions.splice(selectedOptions.indexOf(id), 1);
         $(sender).html("+");
         totalPrice -= options[id].price;
         totalTime -= options[id].time;
+
+        $(sender).removeClass("checked");
     }
 
     total.html(`Total: ${totalPrice.toFixed(1)}$ - ${totalTime.toFixed(1)} min`);

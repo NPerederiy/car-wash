@@ -30,24 +30,22 @@ namespace CarWash.Controllers
         }
 
         [HttpGet, Route("awailable-days")]
-        //public IEnumerable<DateTime> GetAwailableDays([FromQuery]GetAwailableDaysRequest request)
         public IEnumerable<DateTime> GetAwailableDays([FromQuery(Name = "id")]List<int> id)
         {
             GetAwailableDaysRequest request = new GetAwailableDaysRequest()
             {
-                WashOptions = _scheduleService.GetWashOptions().Where((e) => id.IndexOf(e.OptionID) != -1)
+                WashOptions = _scheduleService.GetWashOptions().Where(o => id.Contains(o.OptionID))
             };
             return _scheduleService.GetAwailableDays(request);
         }
 
         [HttpGet, Route("day-shedule")]
-        //public GetScheduleForDayResponse GetSheduleForDay([FromQuery]GetScheduleForDayRequest request)
         public GetScheduleForDayResponse GetSheduleForDay([FromQuery(Name = "id")]List<int> id, [FromQuery(Name = "date")] string date)
         {
             GetScheduleForDayRequest request = new GetScheduleForDayRequest()
             {
                 WashOptions = _scheduleService.GetWashOptions().Where((e) => id.IndexOf(e.OptionID) != -1),
-                Date = DateTime.ParseExact(date, "dd.mm.yyyy", System.Globalization.CultureInfo.InvariantCulture)
+                Date = DateTime.ParseExact(date, "yyyy.MM.dd", System.Globalization.CultureInfo.InvariantCulture)
             };
             return new GetScheduleForDayResponse
             {
@@ -55,37 +53,13 @@ namespace CarWash.Controllers
             };
         }
 
-
-        // GET: api/Shedule
-        [HttpGet]
-        public IEnumerable<string> Get()
+        [HttpPost, Route("create-order")]
+        public int CreateOrder([FromBody]CreateOrderRequest request
+            )
         {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET: api/Shedule/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST: api/Shedule
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT: api/Shedule/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            //var orderID = _scheduleService.CreateOrder(request);
+            //return orderID;
+            return 0;
         }
     }
 }

@@ -4,19 +4,31 @@
     <meta charset="UTF-8">
     <title>DoNuts Car Wash</title>
     <link rel="stylesheet" href="src\main.css">
-        
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 <body style="position: absolute; top: 0; right: 0; bottom: 0; left: 0;">
     <header>
-        <img class="logo" src="src\donut-logo.png"/> 
+        <img class="logo" src="src\donut-logo.png" />
         <h1 class="title">DoNuts Car Wash</h1>
     </header>
+    <form class="form">
+        <button class="btn btn-primary" id="getOptions">Get Options</button>
+        <button class="btn btn-primary" id="getDays">Get Available Days Honoring Options</button>
+        <button class="btn btn-primary" id="getTime">Get Available Time For Particular Day</button>
+        
+    </form>
+    <form action="/api/schedule/create-order" method="post" id="post">
+        <input type="text" name="WashOptionIDs" value="3" />
+        <input type="hidden" name="Date" value="18.11.2018" />
+        <input type="hidden" name="Time" value="18.11.2018" />
+        <input type="hidden" name="BoxID" value="3" />
+
+        <input type="submit" class="btn btn-primary" id="createOrder" value="Create Order" />
+    </form>
     <div class="main">
         <form class="mainForm">
             <div class="serviceList">
-                <ul id="services">
-
-                </ul>
+                <ul id="services"></ul>
                 <div id="total">
                     Total:
                 </div>
@@ -39,9 +51,7 @@
                                             <td>Box #</td>
                                         </tr>
                                     </thead>
-                                    <tbody id="calendar">
-
-                                    </tbody>
+                                    <tbody id="calendar"></tbody>
                                 </table>
                             </td>
                         </tr>
@@ -54,6 +64,86 @@
             integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
             crossorigin="anonymous"></script>
     <script src="scripts\site.js"></script>
+    <script>
+        $("#getOptions").on("click", function () {
+            $.ajax({
+                url: "/api/schedule/options",
+                type: 'GET',
+                success: function (res) {
+                    console.log(res);
+                    alert(res);
+                }
+            });
+        });
+
+        $("#getDays").on("click", function () {
+            var selectedOptionIDs = $(".checked").attr("id");
+            for (var i = 0; i < selectedOptionIDs.length; i++) {
+                selectedOptionIDs = selectedOptionIDs.substring(8);
+            }
+
+            $.ajax({
+                url: "/api/schedule/awailable-days",
+                type: 'GET',
+                data: { id: selectedOptionIDs},
+                success: function (res) {
+                    console.log("Available days");
+                    console.log(res);
+                }
+            });
+        })
+
+        $("#getTime").on("click", function () {
+            var selectedOptionIDs = $(".checked").attr("id");
+            var selectedDate = $(".day.selected").attr("id");
+            for (var i = 0; i < selectedOptionIDs.length; i++) {
+                selectedOptionIDs = selectedOptionIDs.substring(8);
+            }
+
+            $.ajax({
+                url: "/api/schedule/day-shedule",
+                type: 'GET',
+                data: {
+                    id: selectedOptionIDs,
+                    date: selectedDate
+                },
+                success: function (res) {
+                    console.log("Time Schedule");
+                    console.log(res);
+                },
+                error: function (err) {
+                    console.error(err);
+                }
+            });
+        })
+
+        $("#createOrder").on("click", function (e) {
+            e.preventDefault();
+            var selectedOptionIDs = $(".checked").attr("id");
+            var selectedDate = $(".day.selected").attr("id");
+            for (var i = 0; i < selectedOptionIDs.length; i++) {
+                selectedOptionIDs = selectedOptionIDs.substring(8);
+            }
+            var CreateOrderRequest = new Object();
+            CreateOrderRequest.WashOptionIDs = selectedOptionIDs;
+            CreateOrderRequest.Date = "18.11.2018"; //selectedDate;
+            CreateOrderRequest.Time = "18.11,2018"; // new Date(2018, 01, 01, 17, 45);
+            CreateOrderRequest.BoxID = 3;
+           
+            $.post("api/schedule/create-order",
+                $("#post").serialize(),
+                function (value) {
+                    console.log("success");
+                },
+                "json"
+            );
+        })
+
+        $(".form").on("submit", function (e) {
+            console.log("Preventing default...");
+            e.preventDefault();
+        });
+    </script>
     <footer></footer>
 </body>
 </html>

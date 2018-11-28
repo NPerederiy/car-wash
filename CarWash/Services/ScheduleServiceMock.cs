@@ -17,28 +17,28 @@ namespace CarWash.Services
                     OptionID = 1,
                     OptionDescription = "Basic wash",
                     Price = 5.2M,
-                    Time = 0.1
+                    Time = 12
                 },
                 new WashOption
                 {
                     OptionID = 2,
                     OptionDescription = "Rug wash",
                     Price = 5.2M,
-                    Time = 0.5
+                    Time = 12
                 },
                 new WashOption
                 {
                     OptionID = 3,
                     OptionDescription = "Fully qualified washing",
                     Price = 11.4M,
-                    Time = 1.1
+                    Time = 12
                 },
                 new WashOption
                 {
                     OptionID = 4,
                     OptionDescription = "Windows washing",
                     Price = 1.0M,
-                    Time = 0.1
+                    Time = 12
                 },
             };
         }
@@ -97,6 +97,11 @@ namespace CarWash.Services
                 }
             }
             return shedules;
+        }
+
+        public int CreateOrder(CreateOrderRequest request)
+        {
+            throw new NotImplementedException();
         }
     }
 }
