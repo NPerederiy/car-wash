@@ -1,0 +1,18 @@
+﻿.schedule::-webkit-scrollbar {
+    width: 5px;
+}
+/* Track */
+.schedule::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* Handle */
+.schedule::-webkit-scrollbar-thumb {
+    background: #ffffff;
+    border-radius: 3px;
+}
+
+/* Handle on hover */
+    .schedule::-webkit-scrollbar-thumb:hover {
+        background: #808080;
+    }
