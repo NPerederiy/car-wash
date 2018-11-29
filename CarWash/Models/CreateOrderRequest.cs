@@ -11,5 +11,9 @@ namespace CarWash.Models
         public int BoxID { get; set; }
         public DateTime Date { get; set; }
         public DateTime TimeStart { get; set; }
+
+        public string Name { get; set; }
+        public string Surname { get; set; }
+        public string Phone { get; set; }
     }
 }

@@ -54,8 +54,7 @@ namespace CarWash.Controllers
         }
 
         [HttpPost, Route("create-order")]
-        public int CreateOrder([FromBody]CreateOrderRequest request
-            )
+        public int CreateOrder([FromBody]CreateOrderRequest request)
         {
             //var orderID = _scheduleService.CreateOrder(request);
             //return orderID;

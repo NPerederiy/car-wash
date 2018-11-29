@@ -9,9 +9,16 @@ header {
     display: flex;
     flex-direction: row;
     align-content: center;
+    background-color: rgba(0,0,0,0.45);
+    padding-left: 30px;
+    text-shadow: 1px 1px 10px #fff, 1px 1px 10px rgb(105, 171, 255);
 }
 body {
+    color: white;
     background-color: #06031a;
+    background-image: url(mainCover.jpg);
+    background-clip: border-box;
+    background-size: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -44,22 +51,18 @@ div.main {
     padding: 0;
     display: flex;
     flex-direction: row;
+    margin-top: 10px;
 }
 .serviceList {
     width: 15%;
-
-    border: 1px solid black;
-    border-radius: 10px;
-
+    /*border: 1px solid black;*/
+    border-radius: 10px 0px 0px 10px;
     position: relative;
-
     padding-top: 20px;
     padding-left: 10px;
     padding-right: 10px;
     padding-bottom: 20px;
-
-    background-color: white;
-
+    background-color: rgba(0, 0, 0, 0.65);
     min-width: 150px;
 }
 .serviceList li {
@@ -74,26 +77,29 @@ div.main {
     flex-direction: row;
     align-items: center;
 }
-.checkbox{
+.service {
+    padding-left: 5px;
+    padding-right: 5px;
+    border-radius: 10px;
+    color: white;
+}
+.checkbox {
     width: 10px;
     height: 10px;
     margin-right: 7px;
     font-size: 24px;
     font-weight: bold;
-    color: #170b63;
+    color: #69abff;
 }
 .schedule {
     width: 85%;
-
-    border: 1px solid black;
-    border-radius: 10px;
-
+    /*border: 1px solid black;*/
+    border-radius: 0px 10px 10px 0px;
     padding-top: 20px;
     padding-left: 10px;
     padding-right: 10px;
     padding-bottom: 20px;
-
-    background-color: white;
+    background-color: rgba(0, 0, 0, 0.65);
 }
 div.schedule {
     min-width: 600px;
@@ -106,16 +112,29 @@ table.schedule {
     height: 100%;
     padding: 0px;
     border-spacing: 1px;
+    border-radius: 10px;
+    background-color: rgba(0,0,0,0.5);
+}
+table.schedule tbody {
+    background-color: transparent;
 }
 table.schedule tr {
     border-spacing: 1px;
+    background-color: transparent;
 }
-table.schedule td{
+table.schedule td {
     min-width: 100px;
     max-width: 120px;
+    background-color: transparent;
+}
+table.schedule td.day {
+    min-width: 100px;
+    max-width: 120px;
+    /*background-color: rgba(0,0,0,0.3);*/
 }
 table.schedule div {
     border: 0px;
+    background-color: transparent;
     /*min-width: 0px;*/
 }
 .day {
@@ -125,8 +144,9 @@ table.schedule div {
     user-select: none;
     border-radius: 5px;
     border: 0px solid rgb(30, 0, 230);
-    color: rgb(30, 0, 230);
+    color: rgb(105, 171, 255);
     cursor: pointer;
+    /*background-color: rgba(0,0,0,0.3);*/
 }
 .date {
     width: 100px;
@@ -137,11 +157,11 @@ table.schedule div {
     overflow-x: auto;
     overflow-y: auto;
     font-weight: bold;
-    border-right: 1px solid grey;
-    border-bottom: 1px solid grey;
+    /*border-right: 1px solid grey;
+    border-bottom: 1px solid grey;*/
 }
 .today {
-    color: #4b0082;
+    color: rgb(195, 195, 205);
     font-size: 20px;
 }
 .mainTable .today {
@@ -171,6 +191,18 @@ table.schedule div {
 .busy:nth-of-type(4n+5) {
     background-color: rgb(50, 50, 50);
 }
+/*.busy:nth-of-type(4n+2) {
+    background-color: rgba(50, 50, 50, 0.5);
+}
+.busy:nth-of-type(4n+3) {
+    background-color: rgba(50, 50, 50, 0.6);
+}
+.busy:nth-of-type(4n+4) {
+    background-color: rgba(50, 50, 50, 0.7);
+}
+.busy:nth-of-type(4n+5) {
+    background-color: rgba(50, 50, 50, 0.8);
+}*/
 .free {
     height: 100%;
     /*background-color: #5f9ea0;*/
@@ -193,11 +225,23 @@ table.schedule div {
 .free:nth-of-type(4n+5) {
     background-color: #5f9ea0;
 }
+/*.free:nth-of-type(4n+2) {
+    background-color: rgba(95, 158, 160, 0.5);
+}
+.free:nth-of-type(4n+3) {
+    background-color: rgba(95, 158, 160, 0.6);
+}
+.free:nth-of-type(4n+4) {
+    background-color: rgba(95, 158, 160, 0.7);
+}
+.free:nth-of-type(4n+5) {
+    background-color: rgba(95, 158, 160, 0.8);
+}*/
 .selected {
     background-color: rgb(95, 208, 160);
     border-radius: 5px;
-    padding-left: 3px;
-    padding-right: 3px;
+    /*padding-left: 3px;
+    padding-right: 3px;*/
 }
 .busy.selected:nth-of-type(4n+2) {
     background-color: rgba(100, 50, 50, 0.45);

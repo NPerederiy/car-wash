@@ -25,19 +25,27 @@ const monthName = [
     "December"
 ];
 const colors = {
+    optionHoverIn: "rgba(0,0,0,0.5)",
+    optionHoverOut: "transparent",
+
     daySelected: "rgb(0,206,209)",
+    dayDeselected: "transparent",
+
     daySelectedText: "#ffffff",
-    dayDeselectedText: "rgb(30, 0, 230)",
-    dayDeselected: "#ffffff",
+    dayDeselectedText: "rgb(105, 171, 255)",
+
     dayHoverIn: "rgba(0,206,209,0.35)",
-    dayHoverOut: "#ffffff",
-    today: "#4b0082",
+    dayHoverOut: "TRANSPARENT",
+
+    today: "rgb(195, 195, 205)",
+
     availableDay: "green"
 };
 const urls = {
     optionsUrl: "api/schedule/options",                 //Ничего не передаём
     availableDaysUrl: "api/schedule/awailable-days",    //Передаём список услуг (либо просто id, либо объект, из списка options. Я ещё точно не знаю)
-    dayScheduleUrl: "api/schedule/day-shedule"          //Передаём список услуг и день (та же петрушка с обёектом, и объект Date, по-идее)
+    dayScheduleUrl: "api/schedule/day-shedule",         //Передаём список услуг и день (та же петрушка с обёектом, и объект Date, по-идее)
+    createOrderUrl: "api/schedule/create-order"         
 };
 
 var startTime = new Date();
@@ -58,10 +66,11 @@ var options = {};
 var hoveredOption;
 
 var selectedDay;
+var selectedTime;
+var selectedBox;
+var selectedOptions = [];
 
 var selectedDayEl;
-
-var selectedOptions = [];
 
 var selectionAvailable = true;
 
@@ -94,12 +103,27 @@ function changeServices() {
             $.each(data, function (key, item) {
                 $.each(item, function (itemKey, value) {
                     options[value.optionID] = value;
-                    inner += `<li><div><div id = "service_${value.optionID}" class = "checkbox" onclick="optionToggle(this);">+</div> <div id = "descr_${value.optionID}" class = "descr" onclick="optionToggle('#service_${value.optionID}');" >${value.optionDescription}</div></div><div style="margin-left: 30px;">${value.price}$ ${value.time}m</div></li>`;
-                });
-                $('.checkbox, .descr').on('click', function () {
-                    getDaySchedule();
+                    inner += `<li class="service" ` +
+                        `onclick="optionToggle('#service_${value.optionID}');" ` +
+                        `onmouseenter="$(this).css({ backgroundColor: colors.optionHoverIn });" ` +
+                        `onmouseleave = "$(this).css({ backgroundColor: colors.optionHoverOut });" >` +
+                        `<div>` +
+                        `<div id="service_${value.optionID}" class="checkbox">+</div>` +
+                        `<div id="descr_${value.optionID}" class="descr">${value.optionDescription}</div>` + 
+                        `</div>` +
+                        `<div style="margin-left: 30px;">${value.price}$ ${value.time}m</div>` +
+                        `</li>`;
                 });
             });
+
+            $(".service").hover(
+                function (event) {
+                    $(this).css({ backgroundColor: colors.optionHoverIn });
+                },
+                function (event) {
+                    $(this).css({ backgroundColor: colors.optionHoverOut });
+                }
+            );
 
             div.html(inner);
         });
@@ -119,32 +143,31 @@ function changeServices() {
             $.each(data, function (key, item) {
                 $.each(item, function (itemKey, value) {
                     options[value.optionID] = value;
-                    inner += `<li><div><div id = "service_${value.optionID}" class = "checkbox" onclick="optionToggle(this);">+</div> <div id = "descr_${value.optionID}" class = "descr" onclick="optionToggle('#service_${value.optionID}');" >${value.optionDescription}</div></div><div style="margin-left: 30px;">${value.price}$ ${value.time}m</div></li>`;
+                    inner += `<li class="service" ` +
+                        `onclick="optionToggle('#service_${value.optionID}');" ` +
+                        `onmouseenter="$(this).css({ backgroundColor: colors.optionHoverIn });" ` + 
+                        `onmouseleave = "$(this).css({ backgroundColor: colors.optionHoverOut });" >` +
+                        `<div>` +
+                        `<div id="service_${value.optionID}" class="checkbox">+</div>` +
+                        `<div id="descr_${value.optionID}" class="descr">${value.optionDescription}</div>` +
+                        `</div>` +
+                        `<div style="margin-left: 30px;">${value.price}$ ${value.time}m</div>` +
+                        `</li >`;
                 });
             });
+
+            $(".service").hover(
+                function (event) {
+                    $(this).css({ backgroundColor: colors.optionHoverIn });
+                },
+                function (event) {
+                    $(this).css({ backgroundColor: colors.optionHoverOut });
+                }
+            );
 
             inner += "<li style='margin-top: 10px; margin-bottom: 10px'><hr></li>";
 
             div.html(inner);
-
-            //$(".descr").hover(
-            //    function (event) {
-            //        event.stopPropagation();
-            //        if (hoveredOption !== $(this).attr("id")) {
-            //            hoveredOption = $(this).attr("id");
-
-            //            var id = $(this).attr("id").substring(6);
-
-            //            $(`#data_${id}`).html(`<div style="margin-left: 30px;">Price: ${options[id].price}<br>Time: ${options[id].time}</div>`);
-            //        }
-            //    },
-            //    function (event) {
-            //        event.stopPropagation();
-            //        hoveredOption = "";
-            //        var id = $(this).attr("id").substring(6);
-            //        $(`#data_${id}`).html("");
-            //    }
-            //);
         }
     });
 }
@@ -210,15 +233,15 @@ function changeCalendar() {
     html = "";
     time = startTime;
     while (time.getHours() < endTime.getHours()) {
-        html += `\n<tr><td>
-            ${time.getHours() < 10 ? "0" + time.getHours() : time.getHours()}:
-            ${time.getMinutes() < 10 ? "0" + time.getMinutes() : time.getMinutes()}
-            </td>
-            <td id=box1${time.getHours() * 60 + time.getMinutes() - 9 * 60} class="dayschedule free"></td>
-            <td id=box2${time.getHours() * 60 + time.getMinutes() - 9 * 60} class="dayschedule free"></td>
-            <td id=box3${time.getHours() * 60 + time.getMinutes() - 9 * 60} class="dayschedule free"></td>
-            <td id=box4${time.getHours() * 60 + time.getMinutes() - 9 * 60} class="dayschedule free"></td>
-            </tr>`;
+        html += `\n<tr><td>` + 
+            `${time.getHours() < 10 ? "0" + time.getHours() : time.getHours()}:` +
+            `${time.getMinutes() < 10 ? "0" + time.getMinutes() : time.getMinutes()}` + 
+            `</td>` +
+            `<td id=box1${time.getHours() * 60 + time.getMinutes() - 9 * 60} class="dayschedule free"></td>` +
+            `<td id=box2${time.getHours() * 60 + time.getMinutes() - 9 * 60} class="dayschedule free"></td>` +
+            `<td id=box3${time.getHours() * 60 + time.getMinutes() - 9 * 60} class="dayschedule free"></td>` +
+            `<td id=box4${time.getHours() * 60 + time.getMinutes() - 9 * 60} class="dayschedule free"></td>` +
+            `</tr>`;
         time.setMinutes(time.getMinutes() + timeStepMinutes);
     }
 
@@ -259,6 +282,11 @@ function changeCalendar() {
 }
 
 function getAvailableDay(sender, event) {
+    if (selectedOptions.length === 0) {
+        $(".day").css({ borderWidth: "0px" });
+        return;
+    }
+
     if (NO_API_WORK) {
         $.getJSON("src/dates.json", function (data) {
             var div = $("td.day");
@@ -279,11 +307,6 @@ function getAvailableDay(sender, event) {
         return;
     }
     var request = "?";
-
-    if (selectedOptions.length === 0) {
-        $(".day").css({ borderWidth: "0px" });
-        return;
-    }
 
     for (i = 0; i <= selectedOptions.length; i++) {
         if (options[selectedOptions[i]] !== undefined) {
@@ -391,7 +414,16 @@ function getDaySchedule(sender, event) {
             $(".free").click(function (event) {
                 event.stopPropagation();
 
-                console.log(selectionAvailable);
+                if (selectionAvailable) {
+                    var id = $(this).attr("id");
+                    selectedBox = id.substr(3, 1);
+
+                    var offset = parseInt(id.substr(4, id.length)) / 10;
+
+                    selectedTime = $("#calendar").children().eq(offset).children().eq(0).html();
+
+                    $(".registration").css({ visibility: "visible" });
+                }
             });
         });
         return;
@@ -476,6 +508,26 @@ function getDaySchedule(sender, event) {
             });
         }
     });
+}
+
+function createOrder(time, boxID) {
+    
+    var CreateOrderRequest = {};
+    CreateOrderRequest.WashOptionIDs = selectedOptions;
+    CreateOrderRequest.Date = selectedDay; //selectedDate;
+    CreateOrderRequest.Time = time; // new Date(2018, 01, 01, 17, 45);
+    CreateOrderRequest.BoxID = boxID;
+    CreateOrderRequest.Name;
+    CreateOrderRequest.Surname;
+    CreateOrderRequest.Tel;
+
+    $.post(urls.createOrderUrl,
+        JSON.stringify(CreateOrderRequest),
+        function (value) {
+            console.log("success");
+        },
+        "json"
+    );
 }
 
 function optionToggle(sender) {
