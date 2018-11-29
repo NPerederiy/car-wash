@@ -79,7 +79,8 @@ var totalPrice = 0;
 var totalTime = 0;
 
 $(document).ready(function () {
-    changeServices();
+    actions.getOptions();
+   // changeServices();
     changeCalendar();
 });
 
@@ -90,87 +91,6 @@ $(".schedule").click(function (event) {
     selectedDayEl = undefined;
 });
 
-function changeServices() {
-    if (NO_API_WORK) {
-        $.getJSON("src/services.json", function (data) {
-            const div = $("#services");
-
-            $(div).empty();
-
-            var inner = "";
-
-            console.log(data);
-            $.each(data, function (key, item) {
-                $.each(item, function (itemKey, value) {
-                    options[value.optionID] = value;
-                    inner += `<li class="service" ` +
-                        `onclick="optionToggle('#service_${value.optionID}');" ` +
-                        `onmouseenter="$(this).css({ backgroundColor: colors.optionHoverIn });" ` +
-                        `onmouseleave = "$(this).css({ backgroundColor: colors.optionHoverOut });" >` +
-                        `<div>` +
-                        `<div id="service_${value.optionID}" class="checkbox">+</div>` +
-                        `<div id="descr_${value.optionID}" class="descr">${value.optionDescription}</div>` + 
-                        `</div>` +
-                        `<div style="margin-left: 30px;">${value.price}$ ${value.time}m</div>` +
-                        `</li>`;
-                });
-            });
-
-            $(".service").hover(
-                function (event) {
-                    $(this).css({ backgroundColor: colors.optionHoverIn });
-                },
-                function (event) {
-                    $(this).css({ backgroundColor: colors.optionHoverOut });
-                }
-            );
-
-            div.html(inner);
-        });
-        return;
-    }
-    $.ajax({
-        type: "GET",
-        url: urls.optionsUrl,
-        cache: false,
-        success: function (data) {
-            const div = $("#services");
-
-            $(div).empty();
-
-            var inner = "";
-            
-            $.each(data, function (key, item) {
-                $.each(item, function (itemKey, value) {
-                    options[value.optionID] = value;
-                    inner += `<li class="service" ` +
-                        `onclick="optionToggle('#service_${value.optionID}');" ` +
-                        `onmouseenter="$(this).css({ backgroundColor: colors.optionHoverIn });" ` + 
-                        `onmouseleave = "$(this).css({ backgroundColor: colors.optionHoverOut });" >` +
-                        `<div>` +
-                        `<div id="service_${value.optionID}" class="checkbox">+</div>` +
-                        `<div id="descr_${value.optionID}" class="descr">${value.optionDescription}</div>` +
-                        `</div>` +
-                        `<div style="margin-left: 30px;">${value.price}$ ${value.time}m</div>` +
-                        `</li >`;
-                });
-            });
-
-            $(".service").hover(
-                function (event) {
-                    $(this).css({ backgroundColor: colors.optionHoverIn });
-                },
-                function (event) {
-                    $(this).css({ backgroundColor: colors.optionHoverOut });
-                }
-            );
-
-            inner += "<li style='margin-top: 10px; margin-bottom: 10px'><hr></li>";
-
-            div.html(inner);
-        }
-    });
-}
 
 function changeCalendar() {
     var year = 0;
@@ -299,7 +219,7 @@ function getAvailableDay(sender, event) {
             $.each(days, function (key, item) {
                 var date = $(item).attr("id").toString().split(".").join("-");
                 date += "T00:00:00";
-                if (data.indexOf(date) != -1) {
+                if (data.indexOf(date) !== -1) {
                     $(item).css({ borderColor: $(item).css("color"), borderWidth: "1px" });
                 }
             });
@@ -335,7 +255,7 @@ function getAvailableDay(sender, event) {
             $.each(days, function (key, item) {
                 var date = $(item).attr("id").toString().split(".").join("-");
                 date += "T00:00:00";
-                if (data.indexOf(date) != -1) {
+                if (data.indexOf(date) !== -1) {
                     $(item).css({ borderColor: $(item).css("color"), borderWidth: "1px" });
                 }
             });
@@ -344,6 +264,9 @@ function getAvailableDay(sender, event) {
 }
 
 function getDaySchedule(sender, event) {
+    var selectedOptionIDs = $(".checked").attr("id");
+    var selectedDate = $(".day.selected").attr("id");
+
     if (NO_API_WORK) {
         $.getJSON("src/daySchedule.json", function (data) {
             var div = $("td.schedule");
@@ -422,14 +345,14 @@ function getDaySchedule(sender, event) {
 
                     selectedTime = $("#calendar").children().eq(offset).children().eq(0).html();
 
-                    $(".registration").css({ visibility: "visible" });
+                    $("#registrationModal").modal("show");
                 }
             });
         });
         return;
     }
 
-    if (selectedDay == undefined) {
+    if (selectedDay === undefined) {
         selectedDay = Date.now();
     }
     else {
@@ -438,7 +361,7 @@ function getDaySchedule(sender, event) {
 
     var request = "?";
     for (i = 0; i <= selectedOptions.length; i++) {
-        if (options[selectedOptions[i]] != undefined) {
+        if (options[selectedOptions[i]] !== undefined) {
             request += `id=${selectedOptions[i]}&`;
         }
     }
@@ -530,30 +453,143 @@ function createOrder(time, boxID) {
     );
 }
 
-function optionToggle(sender) {
+function optionToggle($sender) {
     var total = $("#total");
-    var id = $(sender).attr("id").substring(8);
+    var id = $sender.data("option-id");
+    var $icon = $(".checkbox", $sender);
 
-    var checked = $(sender).text() === "+" ? true : false;
+    var checked = $sender.hasClass("checked");
 
-    if (checked) {       
-        $(sender).html("&ndash;");
-        selectedOptions.push(id);
+    if (checked) {     
+        // Uncheck
+        $icon.html("+");
+        selectedOptions.splice(selectedOptions.indexOf(id), 1);
 
-        totalPrice += options[id].price;
-        totalTime += options[id].time;
+        totalPrice -= $sender.data("price");
+        totalTime -= $sender.data("time");
 
-        $(sender).addClass("checked");
+        $sender.removeClass("checked");
     }
     else {
-        selectedOptions.splice(selectedOptions.indexOf(id), 1);
-        $(sender).html("+");
-        totalPrice -= options[id].price;
-        totalTime -= options[id].time;
+        // Check
+        $icon.html("&ndash;");
+        selectedOptions.push(id);
 
-        $(sender).removeClass("checked");
+        totalPrice += $sender.data("price");
+        totalTime += $sender.data("time");
+
+        $sender.addClass("checked");
     }
 
     total.html(`Total: ${totalPrice.toFixed(1)}$ - ${totalTime.toFixed(1)} min`);
     getAvailableDay();
 }
+
+var actions = {
+    getOptions: function () {
+        $.ajax({
+            url: urls.optionsUrl,
+            type: 'GET',
+            success: function (response) {
+                helpers.updateOptions(response.washOptions);
+            }
+        });
+    },
+    getAvailableDays: function () {
+        var selectedOptionIDs = $(".checked").attr("id");
+        for (var i = 0; i < selectedOptionIDs.length; i++) {
+            selectedOptionIDs = selectedOptionIDs.substring(8);
+        }
+
+        $.ajax({
+            url: "/api/schedule/awailable-days",
+            type: 'GET',
+            data: { id: selectedOptionIDs },
+            success: function (res) {
+                console.log("Available days");
+                console.log(res);
+            }
+        });
+    },
+    getAvailableTime: function (selectedDate, selectedOptionIDs) {
+        selectedOptionIDs = $(".checked").attr("id");
+        selectedDate = $(".day.selected").attr("id");
+        for (var i = 0; i < selectedOptionIDs.length; i++) {
+            selectedOptionIDs = selectedOptionIDs.substring(8);
+        }
+
+        $.ajax({
+            url: "/api/schedule/day-shedule",
+            type: 'GET',
+            data: {
+                id: selectedOptionIDs,
+                date: selectedDate
+            },
+            success: function (res) {
+                console.log("Time Schedule");
+                console.log(res);
+            },
+            error: function (err) {
+                console.error(err);
+            }
+        });
+    },
+    createOrder: function () {
+        e.preventDefault();
+        var selectedOptionIDs = $(".checked").attr("id");
+        var selectedDate = $(".day.selected").attr("id");
+        for (var i = 0; i < selectedOptionIDs.length; i++) {
+            selectedOptionIDs = selectedOptionIDs.substring(8);
+        }
+        var CreateOrderRequest = new Object();
+        CreateOrderRequest.WashOptionIDs = selectedOptionIDs;
+        CreateOrderRequest.Date = "18.11.2018"; //selectedDate;
+        CreateOrderRequest.Time = "18.11,2018"; // new Date(2018, 01, 01, 17, 45);
+        CreateOrderRequest.BoxID = 3;
+
+        $.post("api/schedule/create-order",
+            $("#post").serialize(),
+            function (value) {
+                console.log("success");
+            },
+            "json"
+        );
+    }
+};
+
+var helpers = {
+    updateOptions: function (options) {
+        var optionsContainer = $("#options");
+
+        optionsContainer.empty();
+
+        var inner = "";
+        // onclick = optionToggle
+        for (var i = 0; i < options.length; i++) {
+            var option = options[i];
+            inner += `<li class="service" data-option-id="${option.optionID}" data-price="${option.price}" data-time="${option.time}">` +
+                    `<div class="title-container">` +
+                        `<div class="checkbox">+</div>` +
+                        `<div class="descr">${option.optionDescription}</div>` +
+                    `</div>` +
+                    `<div class="info-container">` +
+                        `<div class="price pull-right">${option.price}$</div>` +
+                        `<div class="time pull-right"> ${option.time}m</div>` +
+                    `</div >` +
+                `</li >`;
+        }
+
+        inner += "<li style='margin-top: 10px; margin-bottom: 10px'><hr></li>";
+
+        optionsContainer.html(inner);
+
+        $(".service").on("click", function () {
+            optionToggle($(this));
+        });
+    }
+};
+
+$(".form").on("submit", function (e) {
+    console.log("Preventing default...");
+    e.preventDefault();
+});

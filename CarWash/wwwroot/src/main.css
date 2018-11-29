@@ -68,26 +68,11 @@ div.main {
 }
 .serviceList li {
     list-style-type: none;
-    display: flex;
-    flex-direction: column;
 	cursor: pointer;
     /*user-select: none;*/  
 }
-.serviceList li div{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-.service {
-    padding-left: 5px;
-    padding-right: 5px;
-    border-radius: 10px;
-    color: white;
-}
+
 .checkbox {
-    width: 10px;
-    height: 10px;
-    margin-right: 7px;
     font-size: 24px;
     font-weight: bold;
     color: #69abff;
@@ -158,8 +143,6 @@ table.schedule div {
     overflow-x: auto;
     overflow-y: auto;
     font-weight: bold;
-    /*border-right: 1px solid grey;
-    border-bottom: 1px solid grey;*/
 }
 .today {
     color: rgb(195, 195, 205);
@@ -192,18 +175,7 @@ table.schedule div {
 .busy:nth-of-type(4n+5) {
     background-color: rgb(50, 50, 50);
 }
-/*.busy:nth-of-type(4n+2) {
-    background-color: rgba(50, 50, 50, 0.5);
-}
-.busy:nth-of-type(4n+3) {
-    background-color: rgba(50, 50, 50, 0.6);
-}
-.busy:nth-of-type(4n+4) {
-    background-color: rgba(50, 50, 50, 0.7);
-}
-.busy:nth-of-type(4n+5) {
-    background-color: rgba(50, 50, 50, 0.8);
-}*/
+
 .free {
     height: 100%;
     /*background-color: #5f9ea0;*/
@@ -226,23 +198,10 @@ table.schedule div {
 .free:nth-of-type(4n+5) {
     background-color: #5f9ea0;
 }
-/*.free:nth-of-type(4n+2) {
-    background-color: rgba(95, 158, 160, 0.5);
-}
-.free:nth-of-type(4n+3) {
-    background-color: rgba(95, 158, 160, 0.6);
-}
-.free:nth-of-type(4n+4) {
-    background-color: rgba(95, 158, 160, 0.7);
-}
-.free:nth-of-type(4n+5) {
-    background-color: rgba(95, 158, 160, 0.8);
-}*/
+
 .selected {
     background-color: rgb(95, 208, 160);
     border-radius: 5px;
-    /*padding-left: 3px;
-    padding-right: 3px;*/
 }
 .busy.selected:nth-of-type(4n+2) {
     background-color: rgba(100, 50, 50, 0.45);
@@ -272,4 +231,36 @@ table.schedule div {
 #total {
     position: absolute;
     bottom: 10px;
+}
+
+.service{
+    display: flex;
+    justify-content: space-between;
+    align-items:baseline;
+    padding-right: 5px;
+}
+
+.service:hover {
+    background-color: rgba(100,100,100,0.5);
+}
+
+.title-container{
+    display:flex;
+    justify-content:flex-start;
+    align-items:baseline;
+}
+
+.title-container > div{
+    margin-left:5px;
+    margin-right: 5px;
+}
+
+.info-container {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.price, .time{
+    margin-right: 2px;
+    margin-left: 2px;
 }

@@ -7,16 +7,20 @@
     <link rel="stylesheet" href="src/main.css">
     <link rel="stylesheet" href="src/registrationModal.css" />
     <link rel="stylesheet" href="src/scrollbar.css" />
+    <link rel="stylesheet" href="src/loader.css" />
 </head>
-<body style="position: absolute; top: 0; right: 0; bottom: 0; left: 0;">
+<body>
     <header>
         <img class="logo" src="src\donut-logo.png" />
         <h1 class="title">DoNuts Car Wash</h1>
     </header>
+    <div id="temp"></div>
     <div class="main">
         <form class="mainForm">
             <div class="serviceList">
-                <ul id="services"></ul>
+                <ul id="options">
+                    <li class="loader"></li>
+                </ul>
                 <div id="total">
                     Total:
                 </div>
@@ -86,6 +90,7 @@
     <footer></footer>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.12/handlebars.min.js"></script>
     <script src="scripts/site.js"></script>
     <script src="scripts/httpclient.js"></script>
 </body>
