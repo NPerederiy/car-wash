@@ -87,29 +87,23 @@ namespace CarWash.Services
         {
             using(var context = Utilities.Sql())
             {
-                var schedules = context.Query<Schedule, TimeSpan, Schedule>(@"
+                var schedules = context.Query<Schedule>(@"
                 SELECT 
 	                b.BoxID
 	                ,e.EmployeeID
 	                ,b.[Date]
-	                ,b.OrderID
 	                ,b.[Time]
+	                ,b.OrderID
                 FROM
 	                BoxSchedule b
 	                INNER JOIN EmployeeSchedule e
 	                ON b.[Date] = e.[Date]
 	                AND b.[Time] = e.[Time]
 	                AND e.[Date] = @requestedDate",
-                    map: (schedule, time) =>
-                    {
-                        schedule.Time = new DateTime(time.Ticks);
-                        return schedule;
-                    },
                     param: new
                     {
                         requestedDate = request.Date
-                    },
-                    splitOn: "Time");
+                    });
 
                 return schedules;
             }
