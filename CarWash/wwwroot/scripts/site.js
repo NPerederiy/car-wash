@@ -203,7 +203,7 @@ function changeCalendar() {
     for (i = today; i <= daysInMonth; i++) {
         now.setDate(i);
         if (i === today) {
-            html += `\n<td id="${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()}" class="day today">${dayName[now.getDay()]} ${now.getDate()}</td>`;
+            html += `\n<td id="${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()}" class="day today selected">${dayName[now.getDay()]} ${now.getDate()}</td>`;
         }
         else {
             html += `\n<td id="${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()}" class="day">${dayName[now.getDay()]} ${now.getDate()}</td>`;
@@ -225,6 +225,8 @@ function changeCalendar() {
     }
     html += `\n</tr>`;
     $("#dateList").html(html);
+
+    $(".today").css({ backgroundColor: colors.daySelected, color: colors.daySelectedText });
 
     /* Базовое время - 8:00 - 21:00
      * Интервал - 10 минут
@@ -417,6 +419,13 @@ function getDaySchedule(sender, event) {
             $(".free").click(function (event) {
                 event.stopPropagation();
 
+                if (selectedDay === undefined) {
+                    selectedDay = Date.now();
+                }
+                else {
+                    selectedDay = new Date(selectedDay);
+                }
+
                 if (selectionAvailable) {
                     var id = $(this).attr("id");
                     selectedBox = id.substr(3, 1);
@@ -534,6 +543,13 @@ function getDaySchedule(sender, event) {
             $(".free").click(function (event) {
                 event.stopPropagation();
 
+                if (selectedDay === undefined) {
+                    selectedDay = Date.now();
+                }
+                else {
+                    selectedDay = new Date(selectedDay);
+                }
+
                 if (selectionAvailable) {
                     var id = $(this).attr("id");
                     selectedBox = id.substr(3, 1);
@@ -542,7 +558,7 @@ function getDaySchedule(sender, event) {
 
                     selectedTime = $("#calendar").children().eq(offset).children().eq(0).html();
 
-                    $("#modalHeader").html(`Book: ${selectedDay}`);
+                    $("#modalHeader").html(`Book: ${selectedDay.getDate()}.${selectedDay.getMonth() + 1}.${selectedDay.getFullYear()}`);
                     $("#modalBox").html(`Box#${selectedBox}`);
                     $("#modalTime").html(`Time: ${selectedTime}`);
 
