@@ -14,6 +14,12 @@ header {
     text-shadow: 1px 1px 10px #fff, 1px 1px 10px rgb(105, 171, 255);
 }
 body {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
     color: white;
     background-color: #06031a;
     background-image: url(mainCover.jpg);
@@ -23,6 +29,11 @@ body {
     flex-direction: column;
     align-items: center;
     padding-bottom: 20px;
+}
+h3 {
+    margin-top: 0;
+    color: black;
+    text-align: center;
 }
 
 .logo {
@@ -42,11 +53,6 @@ body {
     width: 96%;
 }
 div.main {
-    position: relative;
-}
-.mainForm {
-    width: 100%;
-    height: 100%;
     margin: 0;
     padding: 0;
     display: flex;
@@ -55,13 +61,9 @@ div.main {
 }
 .serviceList {
     width: 15%;
-    /*border: 1px solid black;*/
     border-radius: 10px 0px 0px 10px;
     position: relative;
-    padding-top: 20px;
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-bottom: 20px;
+    padding: 20px 10px 20px 10px;
     background-color: rgba(0, 0, 0, 0.65);
     min-width: 150px;
 }
@@ -70,7 +72,6 @@ div.main {
     display: flex;
     flex-direction: column;
 	cursor: pointer;
-    /*user-select: none;*/  
 }
 .serviceList li div{
     display: flex;
@@ -78,10 +79,16 @@ div.main {
     align-items: center;
 }
 .service {
-    padding-left: 5px;
-    padding-right: 5px;
+    padding: 0px 5px 0px 5px;
     border-radius: 10px;
-    color: white;
+    color: white;    
+}
+.info {
+    margin-left: 30px;
+}
+.info:last-of-type {
+    margin-top: 10px; 
+    margin-bottom: 10px
 }
 .checkbox {
     width: 10px;
@@ -93,12 +100,8 @@ div.main {
 }
 .schedule {
     width: 85%;
-    /*border: 1px solid black;*/
     border-radius: 0px 10px 10px 0px;
-    padding-top: 20px;
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-bottom: 20px;
+    padding: 20px 10px 20px 10px;
     background-color: rgba(0, 0, 0, 0.65);
 }
 div.schedule {
@@ -130,12 +133,29 @@ table.schedule td {
 table.schedule td.day {
     min-width: 100px;
     max-width: 120px;
-    /*background-color: rgba(0,0,0,0.3);*/
 }
 table.schedule div {
     border: 0px;
     background-color: transparent;
-    /*min-width: 0px;*/
+}
+.innerTable {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 1px 1px;
+    padding: 10px;
+}
+.timeLabel {
+    max-width: 60px;
+    width: 60px;
+    font-size: 18px;
+    text-align: center;
+}
+.time {
+    text-align: center;
+}
+.box {
+    font-size: 18px;
+    text-align: center;
 }
 .day {
     width: 90px;
@@ -146,7 +166,6 @@ table.schedule div {
     border: 0px solid rgb(30, 0, 230);
     color: rgb(105, 171, 255);
     cursor: pointer;
-    /*background-color: rgba(0,0,0,0.3);*/
 }
 .date {
     width: 100px;
@@ -157,8 +176,6 @@ table.schedule div {
     overflow-x: auto;
     overflow-y: auto;
     font-weight: bold;
-    /*border-right: 1px solid grey;
-    border-bottom: 1px solid grey;*/
 }
 .today {
     color: rgb(195, 195, 205);
@@ -191,21 +208,8 @@ table.schedule div {
 .busy:nth-of-type(4n+5) {
     background-color: rgb(50, 50, 50);
 }
-/*.busy:nth-of-type(4n+2) {
-    background-color: rgba(50, 50, 50, 0.5);
-}
-.busy:nth-of-type(4n+3) {
-    background-color: rgba(50, 50, 50, 0.6);
-}
-.busy:nth-of-type(4n+4) {
-    background-color: rgba(50, 50, 50, 0.7);
-}
-.busy:nth-of-type(4n+5) {
-    background-color: rgba(50, 50, 50, 0.8);
-}*/
 .free {
     height: 100%;
-    /*background-color: #5f9ea0;*/
     min-height: 10px;
     min-width: 10px;
     border-radius: 5px;
@@ -225,23 +229,9 @@ table.schedule div {
 .free:nth-of-type(4n+5) {
     background-color: #5f9ea0;
 }
-/*.free:nth-of-type(4n+2) {
-    background-color: rgba(95, 158, 160, 0.5);
-}
-.free:nth-of-type(4n+3) {
-    background-color: rgba(95, 158, 160, 0.6);
-}
-.free:nth-of-type(4n+4) {
-    background-color: rgba(95, 158, 160, 0.7);
-}
-.free:nth-of-type(4n+5) {
-    background-color: rgba(95, 158, 160, 0.8);
-}*/
 .selected {
     background-color: rgb(95, 208, 160);
     border-radius: 5px;
-    /*padding-left: 3px;
-    padding-right: 3px;*/
 }
 .busy.selected:nth-of-type(4n+2) {
     background-color: rgba(100, 50, 50, 0.45);
@@ -267,8 +257,81 @@ table.schedule div {
 .free.selected:nth-of-type(4n+5) {
     background-color: rgb(95, 208, 160);
 }
+.unavailable {
+
+}
+.free.selected.unavailable:nth-of-type(4n+2) {
+    background-color: rgba(145, 158, 160, 0.45);
+}
+.free.selected.unavailable:nth-of-type(4n+3) {
+    background-color: rgba(145, 158, 160, 0.65);
+}
+.free.selected.unavailable:nth-of-type(4n+4) {
+    background-color: rgba(145, 158, 160, 0.85);
+}
+.free.selected.unavailable:nth-of-type(4n+5) {
+    background-color: rgb(145, 158, 160);
+}
+div.registration {
+    visibility: hidden;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+td.registration {
+    font-size: 16px;
+    text-align: center;
+}
+.inputField {
+    margin-bottom: 5px;
+    color: black;
+    width: 100%;
+}
+.inputBtn {
+    width: 100%;
+}
+.inputBtn:nth-of-type(3) {
+    margin-top: 20px;
+}
+.inputBtn:nth-of-type(4) {
+    margin-top: 5px;
+}
 
 #total {
     position: absolute;
     bottom: 10px;
+    font-size: 18px;
+    text-align: center;
+    left: 0;
+    right: 0;
+}
+#registration {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    vertical-align: middle;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: rgba(255,255,255, 0.8);
+    color: black;
+    min-width: 200px;
+    min-height: 200px;
+}
+#registration table {
+    width: 100%;
+    height: 100%;
+}
+#registration div {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    vertical-align: middle;
 }
