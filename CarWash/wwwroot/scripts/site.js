@@ -1,5 +1,5 @@
-﻿const NO_API_WORK = true;
-//const NO_API_WORK = false;
+﻿//const NO_API_WORK = true;
+const NO_API_WORK = false;
 
 const dayName = [
     "Sunday",
@@ -103,15 +103,16 @@ function changeServices() {
             $.each(data, function (key, item) {
                 $.each(item, function (itemKey, value) {
                     options[value.optionID] = value;
-                    inner += `<li class="service" ` +
+                    inner +=
+                        `<li class="service" ` +
                         `onclick="optionToggle('#service_${value.optionID}');" ` +
                         `onmouseenter="$(this).css({ backgroundColor: colors.optionHoverIn });" ` +
                         `onmouseleave = "$(this).css({ backgroundColor: colors.optionHoverOut });" >` +
-                        `<div>` +
-                        `<div id="service_${value.optionID}" class="checkbox">+</div>` +
-                        `<div id="descr_${value.optionID}" class="descr">${value.optionDescription}</div>` + 
-                        `</div>` +
-                        `<div style="margin-left: 30px;">${value.price}$ ${value.time}m</div>` +
+                            `<div>` +
+                                `<div id="service_${value.optionID}" class="checkbox">+</div>` +
+                                `<div id="descr_${value.optionID}" class="descr">${value.optionDescription}</div>` + 
+                            `</div>` +
+                            `<div class="info">${value.price}$ ${value.time}m</div>` +
                         `</li>`;
                 });
             });
@@ -151,8 +152,8 @@ function changeServices() {
                         `<div id="service_${value.optionID}" class="checkbox">+</div>` +
                         `<div id="descr_${value.optionID}" class="descr">${value.optionDescription}</div>` +
                         `</div>` +
-                        `<div style="margin-left: 30px;">${value.price}$ ${value.time}m</div>` +
-                        `</li >`;
+                        `<div class="info">${value.price}$ ${value.time}m</div>` +
+                        `</li>`;
                 });
             });
 
@@ -165,7 +166,7 @@ function changeServices() {
                 }
             );
 
-            inner += "<li style='margin-top: 10px; margin-bottom: 10px'><hr></li>";
+            inner += "<li class='info'><hr></li>";
 
             div.html(inner);
         }
@@ -202,7 +203,7 @@ function changeCalendar() {
     for (i = today; i <= daysInMonth; i++) {
         now.setDate(i);
         if (i === today) {
-            html += `\n<td id="${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()}" class="day today">${dayName[now.getDay()]} ${now.getDate()}</td>`;
+            html += `\n<td id="${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()}" class="day today selected">${dayName[now.getDay()]} ${now.getDate()}</td>`;
         }
         else {
             html += `\n<td id="${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()}" class="day">${dayName[now.getDay()]} ${now.getDate()}</td>`;
@@ -213,7 +214,6 @@ function changeCalendar() {
         }
     }
     for (i = 1; i < offset - (daysInMonth - today); i++) {
-        console.log("next month");
         now.setMonth(currentMonth + 1 > 11 ? 0 : currentMonth + 1);
         now.setDate(i);
         html += `\n<td id="${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()}" class="day">${dayName[now.getDay()]} ${now.getDate()}   </td>`;
@@ -226,6 +226,10 @@ function changeCalendar() {
     html += `\n</tr>`;
     $("#dateList").html(html);
 
+    $(".today").css({ backgroundColor: colors.daySelected, color: colors.daySelectedText });
+    selectedDay = new Date();
+    selectedDayEl = $(".today").eq(0).attr("id");
+
     /* Базовое время - 8:00 - 21:00
      * Интервал - 10 минут
      * 13*6 ячеек */
@@ -233,7 +237,7 @@ function changeCalendar() {
     html = "";
     time = startTime;
     while (time.getHours() < endTime.getHours()) {
-        html += `\n<tr><td>` + 
+        html += `\n<tr><td class="time">` + 
             `${time.getHours() < 10 ? "0" + time.getHours() : time.getHours()}:` +
             `${time.getMinutes() < 10 ? "0" + time.getMinutes() : time.getMinutes()}` + 
             `</td>` +
@@ -263,7 +267,8 @@ function changeCalendar() {
     $(".day").click(function (event) {
         event.stopPropagation();
 
-        $(".day").css({ backgroundColor: colors.dayDeselected, colors: colors.dayDeselectedText });
+        $(".day").css({ backgroundColor: colors.dayDeselected, color: colors.dayDeselectedText });
+        $(".today").css({ color: colors.today });
         $(".day").removeClass("selected");
         $(this).css({ backgroundColor: colors.daySelected, color: colors.daySelectedText });
         $(this).addClass("selected");
@@ -279,6 +284,7 @@ function changeCalendar() {
         console.log(selectedDay);
         getDaySchedule();
     });
+    getDaySchedule();
 }
 
 function getAvailableDay(sender, event) {
@@ -299,7 +305,7 @@ function getAvailableDay(sender, event) {
             $.each(days, function (key, item) {
                 var date = $(item).attr("id").toString().split(".").join("-");
                 date += "T00:00:00";
-                if (data.indexOf(date) != -1) {
+                if (data.indexOf(date) !== -1) {
                     $(item).css({ borderColor: $(item).css("color"), borderWidth: "1px" });
                 }
             });
@@ -335,7 +341,7 @@ function getAvailableDay(sender, event) {
             $.each(days, function (key, item) {
                 var date = $(item).attr("id").toString().split(".").join("-");
                 date += "T00:00:00";
-                if (data.indexOf(date) != -1) {
+                if (data.indexOf(date) !== -1) {
                     $(item).css({ borderColor: $(item).css("color"), borderWidth: "1px" });
                 }
             });
@@ -344,6 +350,13 @@ function getAvailableDay(sender, event) {
 }
 
 function getDaySchedule(sender, event) {
+    if (selectedDay === undefined) {
+        selectedDay = Date.now();
+    }
+    else {
+        selectedDay = new Date(selectedDay);
+    }
+
     if (NO_API_WORK) {
         $.getJSON("src/daySchedule.json", function (data) {
             var div = $("td.schedule");
@@ -368,17 +381,19 @@ function getDaySchedule(sender, event) {
                     var box = $(this).attr("id").substr(0, 4);
                     var id = parseInt($(this).attr("id").substr(4));
 
-
                     for (i = 0; i < cells; i++) {
-                        console.log($(`#${box}${id + i * 10}`));
-                        try {
+                        if ($(`#${box}${id + i * 10}`).attr("id") !== undefined) {
+
                             $(`#${box}${id + i * 10}`).addClass("selected");
+
                             if ($(`#${box}${id + i * 10}`).hasClass("busy")) {
                                 selectionAvailable = false;
+                                $(".selected").addClass("unavailable");
                             }
                         }
-                        catch {
-                            console.log("Inccorect index. Probably");
+                        else {
+                            selectionAvailable = false;
+                            $(".selected").addClass("unavailable");
                         }
                     }
                 },
@@ -396,23 +411,23 @@ function getDaySchedule(sender, event) {
                     var box = $(this).attr("id").substr(0, 4);
                     var id = parseInt($(this).attr("id").substr(4));
 
-
+                    $(".selected").removeClass("unavailable");
                     for (i = 0; i < cells; i++) {
-                        console.log($(`#${box}${id + i * 10}`));
-                        try {
-                            $(`#${box}${id + i * 10}`).removeClass("selected");
-                            if ($(`#${box}${id + i * 10}`).hasClass("busy")) {
-                                selectionAvailable = true;
-                            }
-                        }
-                        catch {
-                            console.log("Inccorect index. Probably");
-                        }
-                    }
+
+                        $(`#${box}${id + i * 10}`).removeClass("selected");
+                        selectionAvailable = true;
+                    } 
                 }
             );
             $(".free").click(function (event) {
                 event.stopPropagation();
+
+                if (selectedDay === undefined) {
+                    selectedDay = Date.now();
+                }
+                else {
+                    selectedDay = new Date(selectedDay);
+                }
 
                 if (selectionAvailable) {
                     var id = $(this).attr("id");
@@ -422,6 +437,10 @@ function getDaySchedule(sender, event) {
 
                     selectedTime = $("#calendar").children().eq(offset).children().eq(0).html();
 
+                    $("#modalHeader").html(`Book: ${selectedDay.getDate()}.${selectedDay.getMonth() + 1}.${selectedDay.getFullYear()}`);
+                    $("#modalBox").html(`Box#${selectedBox}`);
+                    $("#modalTime").html(`Time: ${selectedTime}`);
+
                     $(".registration").css({ visibility: "visible" });
                 }
             });
@@ -429,16 +448,9 @@ function getDaySchedule(sender, event) {
         return;
     }
 
-    if (selectedDay == undefined) {
-        selectedDay = Date.now();
-    }
-    else {
-        selectedDay = new Date(selectedDay);
-    }
-
     var request = "?";
     for (i = 0; i <= selectedOptions.length; i++) {
-        if (options[selectedOptions[i]] != undefined) {
+        if (options[selectedOptions[i]] !== undefined) {
             request += `id=${selectedOptions[i]}&`;
         }
     }
@@ -448,7 +460,7 @@ function getDaySchedule(sender, event) {
         return;
     }
 
-    request += `date=${selectedDay.getDate().toString().length < 2 ? "0" + selectedDay.getDate().toString() : selectedDay.getDate().toString()}.${selectedDay.getMonth().toString().length < 2 ? "0" + selectedDay.getMonth().toString() : selectedDay.getMonth().toString()}.${selectedDay.getFullYear()}`;
+    request += `date=${selectedDay.getFullYear()}.${selectedDay.getMonth().toString().length < 2 ? "0" + selectedDay.getMonth().toString() : selectedDay.getMonth().toString()}.${selectedDay.getDate().toString().length < 2 ? "0" + selectedDay.getDate().toString() : selectedDay.getDate().toString()}`;
     //request = request.substr(0, request.length - 1);
     console.log(urls.dayScheduleUrl + request);
     $.ajax({
@@ -465,9 +477,12 @@ function getDaySchedule(sender, event) {
             console.log("Success!");
             console.log(data);
 
+            $.each(data, function (key, item) {
+
+            });
+
             $(".free").hover(
                 function (event) {
-                    console.log($(this));
                     event.stopPropagation();
 
                     var cells = 0;
@@ -480,46 +495,97 @@ function getDaySchedule(sender, event) {
 
                     var box = $(this).attr("id").substr(0, 4);
                     var id = parseInt($(this).attr("id").substr(4));
-                    var enoughSpace = true;
-                    for (i = 1; i <= cells; i++) {
-                        if (!$(`#${box}${id + i}`).hasClass("free")) {
-                            enoughSpace = false;
+
+
+                    for (i = 0; i < cells; i++) {
+                        console.log($(`#${box}${id + i * 10}`));
+                        try {
+                            $(`#${box}${id + i * 10}`).addClass("selected");
+                            if ($(`#${box}${id + i * 10}`).hasClass("busy")) {
+                                selectionAvailable = false;
+                                $(".selected").addClass("unavailable");
+                            }
                         }
-                        else {
-                            var color = $(`#${box}${id + i}`).css("background-color").split(",");
-                            console.log(color);
+                        catch {
+                            console.log("Inccorect index. Probably");
+                            selectionAvailable = false;
+                            $(".selected").addClass("unavailable");
                         }
-                    }
-                    if (enoughSpace) {
-                        //
                     }
                 },
                 function (event) {
                     event.stopPropagation();
+
+                    var cells = 0;
+                    if (totalTime % timeStepMinutes !== 0) {
+                        cells = Math.trunc((totalTime + timeStepMinutes) / timeStepMinutes);
+                    }
+                    else {
+                        cells = Math.trunc(totalTime / timeStepMinutes);
+                    }
+
+                    var box = $(this).attr("id").substr(0, 4);
+                    var id = parseInt($(this).attr("id").substr(4));
+
+
+                    for (i = 0; i < cells; i++) {
+                        console.log($(`#${box}${id + i * 10}`));
+                        try {
+                            $(`#${box}${id + i * 10}`).removeClass("selected").removeClass(".unavailbale");
+                            if ($(`#${box}${id + i * 10}`).hasClass("busy")) {
+                                selectionAvailable = true;
+                            }
+                        }
+                        catch {
+                            console.log("Inccorect index. Probably");
+                            selectionAvailable = true;
+                        }
+                    }
                 }
             );
-            $(".free").click(function (event)
-            {
-				//console.log("ect");
+            $(".free").click(function (event) {
                 event.stopPropagation();
-				//if (selectionAvailable) {
-				//	$(".registration").css({visibility: "visible"});
-				//}
+
+                if (selectedDay === undefined) {
+                    selectedDay = Date.now();
+                }
+                else {
+                    selectedDay = new Date(selectedDay);
+                }
+
+                if (selectionAvailable) {
+                    var id = $(this).attr("id");
+                    selectedBox = id.substr(3, 1);
+
+                    var offset = parseInt(id.substr(4, id.length)) / 10;
+
+                    selectedTime = $("#calendar").children().eq(offset).children().eq(0).html();
+
+                    $("#modalHeader").html(`Book: ${selectedDay.getDate()}.${selectedDay.getMonth() + 1}.${selectedDay.getFullYear()}`);
+                    $("#modalBox").html(`Box#${selectedBox}`);
+                    $("#modalTime").html(`Time: ${selectedTime}`);
+
+                    $(".registration").css({ visibility: "visible" });
+                }
             });
         }
     });
 }
 
-function createOrder(time, boxID) {
-    
+function createOrder() {
+    var boxID = $("#modalBox").html().substr(4);
+    var time = $("#modalTime").html().substr(6);
+
     var CreateOrderRequest = {};
     CreateOrderRequest.WashOptionIDs = selectedOptions;
     CreateOrderRequest.Date = selectedDay; //selectedDate;
     CreateOrderRequest.Time = time; // new Date(2018, 01, 01, 17, 45);
     CreateOrderRequest.BoxID = boxID;
-    CreateOrderRequest.Name;
-    CreateOrderRequest.Surname;
-    CreateOrderRequest.Tel;
+    CreateOrderRequest.Name = $("#modalName").value;
+    CreateOrderRequest.Surname = $("#modalSurame").value;
+    CreateOrderRequest.Tel = $("#modalTel").value;
+
+    console.log(CreateOrderRequest);
 
     $.post(urls.createOrderUrl,
         JSON.stringify(CreateOrderRequest),
@@ -556,4 +622,5 @@ function optionToggle(sender) {
 
     total.html(`Total: ${totalPrice.toFixed(1)}$ - ${totalTime.toFixed(1)} min`);
     getAvailableDay();
+    getDaySchedule();
 }
