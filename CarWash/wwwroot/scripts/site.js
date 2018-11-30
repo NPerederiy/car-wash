@@ -1,5 +1,5 @@
-﻿const NO_API_WORK = true;
-//const NO_API_WORK = false;
+﻿//const NO_API_WORK = true;
+const NO_API_WORK = false;
 
 const dayName = [
     "Sunday",
@@ -227,6 +227,8 @@ function changeCalendar() {
     $("#dateList").html(html);
 
     $(".today").css({ backgroundColor: colors.daySelected, color: colors.daySelectedText });
+    selectedDay = new Date();
+    selectedDayEl = $(".today").eq(0).attr("id");
 
     /* Базовое время - 8:00 - 21:00
      * Интервал - 10 минут
@@ -282,6 +284,7 @@ function changeCalendar() {
         console.log(selectedDay);
         getDaySchedule();
     });
+    getDaySchedule();
 }
 
 function getAvailableDay(sender, event) {
@@ -457,7 +460,7 @@ function getDaySchedule(sender, event) {
         return;
     }
 
-    request += `date=${selectedDay.getDate().toString().length < 2 ? "0" + selectedDay.getDate().toString() : selectedDay.getDate().toString()}.${selectedDay.getMonth().toString().length < 2 ? "0" + selectedDay.getMonth().toString() : selectedDay.getMonth().toString()}.${selectedDay.getFullYear()}`;
+    request += `date=${selectedDay.getFullYear()}.${selectedDay.getMonth().toString().length < 2 ? "0" + selectedDay.getMonth().toString() : selectedDay.getMonth().toString()}.${selectedDay.getDate().toString().length < 2 ? "0" + selectedDay.getDate().toString() : selectedDay.getDate().toString()}`;
     //request = request.substr(0, request.length - 1);
     console.log(urls.dayScheduleUrl + request);
     $.ajax({
@@ -581,6 +584,8 @@ function createOrder() {
     CreateOrderRequest.Name = $("#modalName").value;
     CreateOrderRequest.Surname = $("#modalSurame").value;
     CreateOrderRequest.Tel = $("#modalTel").value;
+
+    console.log(CreateOrderRequest);
 
     $.post(urls.createOrderUrl,
         JSON.stringify(CreateOrderRequest),
