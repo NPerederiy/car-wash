@@ -54,11 +54,17 @@ namespace CarWash.Controllers
         }
 
         [HttpPost, Route("create-order")]
-        public int CreateOrder([FromBody]CreateOrderRequest request)
+        public IActionResult CreateOrder(CreateOrderRequest request)
         {
-            //var orderID = _scheduleService.CreateOrder(request);
-            //return orderID;
-            return 0;
+            try
+            {
+                var orderID = _scheduleService.CreateOrder(request);
+                return Ok(orderID);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex);
+            }
         }
     }
 }

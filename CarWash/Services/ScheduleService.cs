@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Dapper;
-using System.Threading.Tasks;
 
 namespace CarWash.Services
 {
@@ -111,10 +110,10 @@ namespace CarWash.Services
 
         public int CreateOrder(CreateOrderRequest request)
         {
-            var timeStart = request.TimeStart;
+            var startAt = request.Date.TimeOfDay;
             var washOptions = GetWashOptions().Where(o => request.WashOptionIDs.Contains(o.OptionID));
-            var timeEnd = GetEndTime(timeStart, washOptions);
-            var availableEmployees = GetAvailableEmployees(request.Date, timeStart, timeEnd);
+            var timeEnd = GetEndTime(startAt, washOptions);
+            var availableEmployees = GetAvailableEmployees(request.Date, startAt, timeEnd);
             if (!availableEmployees.Any())
                 throw new ArgumentException("Invalid time frames. There are no available employees.");
             var employeeID = availableEmployees.First();
@@ -122,12 +121,13 @@ namespace CarWash.Services
             using(var context = Utilities.Sql())
             {
                 var orderID = context.ExecuteScalar<int>(@"
+                DECLARE @orderID int;
                 EXEC dbo.CreateOrder @date, @startAt, @finishAt, @boxID, @employeeID, @orderID = @orderID OUTPUT
 
                 SELECT @orderID
                 ", new {
                     date = request.Date,
-                    startAt = timeStart,
+                    startAt = startAt,
                     finishAt = timeEnd,
                     boxID = request.BoxID,
                     employeeID = employeeID
@@ -241,7 +241,7 @@ namespace CarWash.Services
             }
         }
 
-        private IEnumerable<int> GetAvailableEmployees(DateTime date, DateTime freeFrom, DateTime freeTo)
+        private IEnumerable<int> GetAvailableEmployees(DateTime date, TimeSpan freeFrom, TimeSpan freeTo)
         {
             using(var context = Utilities.Sql())
             {
@@ -256,7 +256,7 @@ namespace CarWash.Services
 	                AND FreeTo >= @freeTo",
                     new
                     {
-                        date,
+                        date.Date,
                         freeFrom,
                         freeTo
                     });
@@ -264,13 +264,14 @@ namespace CarWash.Services
             }
         }
 
-        private DateTime GetEndTime(DateTime startTime, IEnumerable<WashOption> washOptions)
+        private TimeSpan GetEndTime(TimeSpan startTime, IEnumerable<WashOption> washOptions)
         {
             using(var context = Utilities.Sql())
             {
-                var rawEndTime = startTime.AddMinutes(CalculateTime(washOptions));
+                var minutesRequired = CalculateTime(washOptions);
+                var rawEndTime = startTime + new TimeSpan(0, minutesRequired, 0);
 
-                var time = context.ExecuteScalar<DateTime>(@"
+                var time = context.ExecuteScalar<TimeSpan>(@"
                 SELECT TOP 1
                     [Time]
                 FROM
