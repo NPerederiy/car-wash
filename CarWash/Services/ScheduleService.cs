@@ -23,28 +23,28 @@ namespace CarWash.Services
                     OptionID = 1,
                     OptionDescription = "Basic wash",
                     Price = 5.2M,
-                    Time = 0.1
+                    Time = 2
                 },
                 new WashOption
                 {
                     OptionID = 2,
                     OptionDescription = "Rug wash",
                     Price = 5.2M,
-                    Time = 0.5
+                    Time = 7
                 },
                 new WashOption
                 {
                     OptionID = 3,
                     OptionDescription = "Fully qualified washing",
                     Price = 11.4M,
-                    Time = 1.1
+                    Time = 12
                 },
                 new WashOption
                 {
                     OptionID = 4,
                     OptionDescription = "Windows washing",
                     Price = 1.0M,
-                    Time = 0.1
+                    Time = 3
                 },
             };
         }
@@ -59,14 +59,21 @@ namespace CarWash.Services
                 var timeRequired = CalculateTime(request.WashOptions);
 
                 var days = context.Query<DateTime>(@"
-                SELECT 
+                SELECT DISTINCT
 	                [Date]
                 FROM 
-	                EmployeeSchedule
-                WHERE
-	                DATEDIFF(hour, FreeFrom, FreeTo) >= @requestedTime
-                GROUP BY [Date]
-                ORDER BY [Date]",
+	                EmployeeSchedule e
+                INNER JOIN
+                    BoxSchedule b
+                    ON b.[Date] = e.[Date]
+                        AND b.[Time] = e.[Time]
+                GROUP BY 
+                    b.[Date], b.FreeFrom, b.FreeTo
+                HAVING 
+                    DATEDIFF(hour, b.FreeFrom, b.FreeTo) >= @requestedTime
+                    AND DATEDIFF(hour, e.FreeFrom, e.FreeTo) >= @requestedTime
+                ORDER BY 
+                    [Date]",
                 param: new
                 {
                     requestedTime = timeRequired
@@ -99,6 +106,33 @@ namespace CarWash.Services
                     });
 
                 return schedules;
+            }
+        }
+
+        public int CreateOrder(CreateOrderRequest request)
+        {
+            var timeStart = request.TimeStart;
+            var washOptions = GetWashOptions().Where(o => request.WashOptionIDs.Contains(o.OptionID));
+            var timeEnd = GetEndTime(timeStart, washOptions);
+            var availableEmployees = GetAvailableEmployees(request.Date, timeStart, timeEnd);
+            if (!availableEmployees.Any())
+                throw new ArgumentException("Invalid time frames. There are no available employees.");
+            var employeeID = availableEmployees.First();
+
+            using(var context = Utilities.Sql())
+            {
+                var orderID = context.ExecuteScalar<int>(@"
+                EXEC dbo.CreateOrder @date, @startAt, @finishAt, @boxID, @employeeID, @orderID = @orderID OUTPUT
+
+                SELECT @orderID
+                ", new {
+                    date = request.Date,
+                    startAt = timeStart,
+                    finishAt = timeEnd,
+                    boxID = request.BoxID,
+                    employeeID = employeeID
+                });
+                return orderID;
             }
         }
 
@@ -207,7 +241,54 @@ namespace CarWash.Services
             }
         }
 
-        private double CalculateTime(IEnumerable<WashOption> options)
+        private IEnumerable<int> GetAvailableEmployees(DateTime date, DateTime freeFrom, DateTime freeTo)
+        {
+            using(var context = Utilities.Sql())
+            {
+                var ids = context.Query<int>(@"
+                SELECT DISTINCT
+	                EmployeeID
+                FROM
+	                EmployeeSchedule
+                WHERE
+	                [Date] = @date
+	                AND FreeFrom <= @freeFrom
+	                AND FreeTo >= @freeTo",
+                    new
+                    {
+                        date,
+                        freeFrom,
+                        freeTo
+                    });
+                return ids ?? new List<int>();
+            }
+        }
+
+        private DateTime GetEndTime(DateTime startTime, IEnumerable<WashOption> washOptions)
+        {
+            using(var context = Utilities.Sql())
+            {
+                var rawEndTime = startTime.AddMinutes(CalculateTime(washOptions));
+
+                var time = context.ExecuteScalar<DateTime>(@"
+                SELECT TOP 1
+                    [Time]
+                FROM
+                    EmployeeSchedule
+                WHERE
+                    [Time] >= @endTime
+                ORDER BY
+                    [Time]
+                ",
+                new
+                {
+                    endTime = rawEndTime
+                });
+                return time;
+            }
+        }
+
+        private int CalculateTime(IEnumerable<WashOption> options)
         {
             return options.Sum(o => o.Time);
         }
