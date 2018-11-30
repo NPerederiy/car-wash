@@ -99,7 +99,6 @@ function changeServices() {
 
             var inner = "";
 
-            console.log(data);
             $.each(data, function (key, item) {
                 $.each(item, function (itemKey, value) {
                     options[value.optionID] = value;
@@ -217,7 +216,6 @@ function changeCalendar() {
         now.setMonth(currentMonth + 1 > 11 ? 0 : currentMonth + 1);
         now.setDate(i);
         html += `\n<td id="${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()}" class="day">${dayName[now.getDay()]} ${now.getDate()}   </td>`;
-        console.log(html);
         count++;
         if (count > offset) {
             break;
@@ -281,7 +279,6 @@ function changeCalendar() {
 
         selectedDayEl = $(this).attr("id");
 
-        console.log(selectedDay);
         getDaySchedule();
     });
     getDaySchedule();
@@ -296,9 +293,6 @@ function getAvailableDay(sender, event) {
     if (NO_API_WORK) {
         $.getJSON("src/dates.json", function (data) {
             var div = $("td.day");
-
-            console.log("Success!");
-            console.log(data);
 
             $(".day").css({ borderWidth: "0px" });
             var days = $(".day");
@@ -320,7 +314,6 @@ function getAvailableDay(sender, event) {
         }
     }
     request = request.substr(0, request.length - 1);
-    console.log(urls.availableDaysUrl + request);
 
     $.ajax({
         type: "GET",
@@ -328,13 +321,8 @@ function getAvailableDay(sender, event) {
         cache: false,
         error: function (jqXHR, textStatus, errorThrown) {
             alert("Something went wrong!");
-            console.log(jqXHR);
-            console.log(textStatus);
-            console.log(errorThrown);
         },
         success: function (data) {
-            console.log("Success!");
-            console.log(data);
 
             $(".day").css({ borderWidth: "0px" });
             var days = $(".day");
@@ -361,7 +349,6 @@ function getDaySchedule(sender, event) {
         $.getJSON("src/daySchedule.json", function (data) {
             var div = $("td.schedule");
 
-            console.log(data);
             $.each(data, function (key, item) {
                 //Тут должен быть код...
             });
@@ -462,20 +449,14 @@ function getDaySchedule(sender, event) {
 
     request += `date=${selectedDay.getFullYear()}.${selectedDay.getMonth().toString().length < 2 ? "0" + selectedDay.getMonth().toString() : selectedDay.getMonth().toString()}.${selectedDay.getDate().toString().length < 2 ? "0" + selectedDay.getDate().toString() : selectedDay.getDate().toString()}`;
     //request = request.substr(0, request.length - 1);
-    console.log(urls.dayScheduleUrl + request);
     $.ajax({
         type: "GET",
         url: urls.dayScheduleUrl + request,
         cache: false,
         error: function (jqXHR, textStatus, errorThrown) {
             alert("Something went wrong!");
-            console.log(jqXHR);
-            console.log(textStatus);
-            console.log(errorThrown);
         },
         success: function (data) {
-            console.log("Success!");
-            console.log(data);
 
             $.each(data, function (key, item) {
 
@@ -498,7 +479,6 @@ function getDaySchedule(sender, event) {
 
 
                     for (i = 0; i < cells; i++) {
-                        console.log($(`#${box}${id + i * 10}`));
                         try {
                             $(`#${box}${id + i * 10}`).addClass("selected");
                             if ($(`#${box}${id + i * 10}`).hasClass("busy")) {
@@ -507,7 +487,6 @@ function getDaySchedule(sender, event) {
                             }
                         }
                         catch {
-                            console.log("Inccorect index. Probably");
                             selectionAvailable = false;
                             $(".selected").addClass("unavailable");
                         }
@@ -529,7 +508,6 @@ function getDaySchedule(sender, event) {
 
 
                     for (i = 0; i < cells; i++) {
-                        console.log($(`#${box}${id + i * 10}`));
                         try {
                             $(`#${box}${id + i * 10}`).removeClass("selected").removeClass(".unavailbale");
                             if ($(`#${box}${id + i * 10}`).hasClass("busy")) {
@@ -537,7 +515,6 @@ function getDaySchedule(sender, event) {
                             }
                         }
                         catch {
-                            console.log("Inccorect index. Probably");
                             selectionAvailable = true;
                         }
                     }
@@ -576,24 +553,35 @@ function createOrder() {
     var boxID = $("#modalBox").html().substr(4);
     var time = $("#modalTime").html().substr(6);
 
+    var hours = time.split(":")[0];
+    var minutes = time.split(":")[1];
+
+    selectedDay.setHours(hours);
+    selectedDay.setMinutes(minutes);
+
     var CreateOrderRequest = {};
     CreateOrderRequest.WashOptionIDs = selectedOptions;
     CreateOrderRequest.Date = selectedDay; //selectedDate;
-    CreateOrderRequest.Time = time; // new Date(2018, 01, 01, 17, 45);
     CreateOrderRequest.BoxID = boxID;
-    CreateOrderRequest.Name = $("#modalName").value;
-    CreateOrderRequest.Surname = $("#modalSurame").value;
-    CreateOrderRequest.Tel = $("#modalTel").value;
+    CreateOrderRequest.Name = $("#modalName").val();
+    CreateOrderRequest.Surname = $("#modalSurname").val();
+    CreateOrderRequest.Phone = $("#modalTel").val();
 
-    console.log(CreateOrderRequest);
+    sendRequest(CreateOrderRequest).done(function (data) {
+        console.log(data);
+    });
+}
 
-    $.post(urls.createOrderUrl,
-        JSON.stringify(CreateOrderRequest),
-        function (value) {
-            console.log("success");
-        },
-        "json"
-    );
+function sendRequest(data) {
+    return $.ajax({
+        type: "POST",
+        url: urls.createOrderUrl,
+        dataType: 'json',
+        contentType: 'application/json',
+        data: data ? JSON.stringify(data) : null
+    }).fail(function (jqXHR, textStatus, errorThrown) {
+        console.error(errorThrown);
+    });
 }
 
 function optionToggle(sender) {
