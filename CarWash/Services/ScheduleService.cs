@@ -60,7 +60,7 @@ namespace CarWash.Services
 
                 var days = context.Query<DateTime>(@"
                 SELECT DISTINCT
-	                [Date]
+	                b.[Date]
                 FROM 
 	                EmployeeSchedule e
                 INNER JOIN
@@ -68,7 +68,7 @@ namespace CarWash.Services
                     ON b.[Date] = e.[Date]
                         AND b.[Time] = e.[Time]
                 GROUP BY 
-                    b.[Date], b.FreeFrom, b.FreeTo
+                    b.[Date], b.FreeFrom, b.FreeTo, e.FreeFrom, e.FreeTo
                 HAVING 
                     DATEDIFF(hour, b.FreeFrom, b.FreeTo) >= @requestedTime
                     AND DATEDIFF(hour, e.FreeFrom, e.FreeTo) >= @requestedTime
