@@ -335,3 +335,19 @@ td.registration {
     align-self: center;
     vertical-align: middle;
 }
+.schedule::-webkit-scrollbar {
+    width: 5px;
+}
+/* Track */
+.schedule::-webkit-scrollbar-track {
+    background: transparent;
+}
+/* Handle */
+.schedule::-webkit-scrollbar-thumb {
+    background: #bbbbbb;
+    border-radius: 3px;
+}
+/* Handle on hover */
+.schedule::-webkit-scrollbar-thumb:hover {
+    background: #dddddd;
+}
