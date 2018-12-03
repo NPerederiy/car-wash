@@ -333,7 +333,7 @@ function changeCalendar() {
             var id = $(this).attr("id");
             selectedBox = id.substr(3, 1);
 
-            var offset = parseInt(id.substr(4, id.length)) / 10;
+            var offset = parseInt(id.substr(4, id.length)) / timeStepMinutes;
 
             selectedTime = $("#calendar").children().eq(offset).children().eq(0).html();
 
