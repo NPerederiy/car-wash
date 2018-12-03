@@ -25,7 +25,7 @@ const monthName = [
     "December"
 ];
 const urls = {
-    optionsUrl: "api/schedule/optionsList",                 //Ничего не передаём
+    optionsUrl: "api/schedule/options",                 //Ничего не передаём
     availableDaysUrl: "api/schedule/awailable-days",    //Передаём список услуг (либо просто id, либо объект, из списка optionsList. Я ещё точно не знаю)
     dayScheduleUrl: "api/schedule/day-shedule",         //Передаём список услуг и день (та же петрушка с обёектом, и объект Date, по-идее)
     createOrderUrl: "api/schedule/create-order"         
@@ -377,6 +377,7 @@ function getAvailableDay(sender, event) {
             alert("Something went wrong!");
         },
         success: function (data) {
+            console.log(data);
             process.availableDay(data);
             //processAvailbaleDays(data);
         }
