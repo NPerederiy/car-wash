@@ -87,7 +87,7 @@ div.main {
     margin-left: 30px;
 }
 .info:last-of-type {
-    margin-top: 10px; 
+    /*margin-top: 10px;*/ 
     margin-bottom: 10px
 }
 .checkbox {
@@ -97,6 +97,9 @@ div.main {
     font-size: 24px;
     font-weight: bold;
     color: #69abff;
+}
+.descr {
+    font-size: 17px;
 }
 .schedule {
     width: 85%;
@@ -118,22 +121,21 @@ table.schedule {
     border-radius: 10px;
     background-color: rgba(0,0,0,0.5);
 }
-table.schedule tbody {
+/*table.schedule tbody {
     background-color: transparent;
-}
+}*/
 table.schedule tr {
     border-spacing: 1px;
     background-color: transparent;
 }
-table.schedule td {
+/*table.schedule td {
     min-width: 100px;
     max-width: 120px;
-    background-color: transparent;
 }
 table.schedule td.day {
     min-width: 100px;
     max-width: 120px;
-}
+}*/
 table.schedule div {
     border: 0px;
     background-color: transparent;
@@ -145,9 +147,9 @@ table.schedule div {
     padding: 10px;
 }
 .timeLabel {
-    max-width: 60px;
-    width: 60px;
-    font-size: 18px;
+    /*max-width: 60px;*/
+    width: 110px;
+    font-size: 17px;
     text-align: center;
 }
 .time {
@@ -156,23 +158,26 @@ table.schedule div {
 .box {
     font-size: 18px;
     text-align: center;
+    width: 22.2%;
 }
 .day {
-    width: 90px;
+    width: 12.5%;
     text-align: center;
-    height: 14.28%;
+    height: 30px;
     user-select: none;
     border-radius: 5px;
     border: 0px solid rgb(30, 0, 230);
-    color: rgb(105, 171, 255);
+    /*color: rgb(105, 171, 255);*/
+    color: white;
     cursor: pointer;
 }
 .date {
-    width: 100px;
-    height: 14.28%;
+    width: 90px;
+    /*height: 14.28%;*/
     text-align: center;
     user-select: none;
-    border-radius: 0px 0px 5px 0px;
+    /*border-radius: 0px 0px 5px 0px;*/
+    border-radius: 5px;
     overflow-x: auto;
     overflow-y: auto;
     font-weight: bold;
@@ -181,10 +186,11 @@ table.schedule div {
     color: rgb(195, 195, 205);
     font-size: 20px;
 }
-.mainTable .today {
+/*.mainTable .today {
     color: darkseagreen;
     padding: 0px;
-}
+}*/
+
 .dayschedule {
     height: 100%;   
     margin: 0px;
@@ -312,6 +318,10 @@ td.registration {
     text-align: center;
     left: 0;
     right: 0;
+    background-color: rgba(0, 0, 0, 0.65);
+    border-radius: 5px;
+    padding: 2px;
+    margin-left: 10px;
 }
 #registration {
     display: flex;
