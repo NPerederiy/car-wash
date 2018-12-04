@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Dapper;
+using CarWashWebService;
+using System.Threading.Tasks;
 
 namespace CarWash.Services
 {
@@ -108,32 +110,24 @@ namespace CarWash.Services
             }
         }
 
-        public int CreateOrder(CreateOrderRequest request)
+        public async Task<int> CreateOrder(CreateOrderRequest request)
         {
-            var startAt = request.Date.TimeOfDay;
-            var washOptions = GetWashOptions().Where(o => request.WashOptionIDs.Contains(o.OptionID));
-            var timeEnd = GetEndTime(startAt, washOptions);
-            var availableEmployees = GetAvailableEmployees(request.Date, startAt, timeEnd);
-            if (!availableEmployees.Any())
-                throw new ArgumentException("Invalid time frames. There are no available employees.");
-            var employeeID = availableEmployees.First();
-
-            using(var context = Utilities.Sql())
+            var client = new CarWashWebServiceClient();
+            var result = await client.CreateOrderAsync(new CreateCarWashOrderRequest
             {
-                var orderID = context.ExecuteScalar<int>(@"
-                DECLARE @orderID int;
-                EXEC dbo.CreateOrder @date, @startAt, @finishAt, @boxID, @employeeID, @orderID = @orderID OUTPUT
+                BoxID = request.BoxID,
+                Date = request.Date,
+                Name = request.Name,
+                Phone = request.Phone,
+                Surname = request.Surname,
+                WashOptionIDs = request.WashOptionIDs.ToArray()
+            });
+           await client.CloseAsync();
 
-                SELECT @orderID
-                ", new {
-                    date = request.Date,
-                    startAt = startAt,
-                    finishAt = timeEnd,
-                    boxID = request.BoxID,
-                    employeeID = employeeID
-                });
-                return orderID;
-            }
+            if (result.Success)
+                return result.OrdderID;
+            else
+                return 0;
         }
 
         private void UpdateDatabase()
@@ -238,54 +232,6 @@ namespace CarWash.Services
             catch(Exception e)
             {
                 var a = 6;
-            }
-        }
-
-        private IEnumerable<int> GetAvailableEmployees(DateTime date, TimeSpan freeFrom, TimeSpan freeTo)
-        {
-            using(var context = Utilities.Sql())
-            {
-                var ids = context.Query<int>(@"
-                SELECT DISTINCT
-	                EmployeeID
-                FROM
-	                EmployeeSchedule
-                WHERE
-	                [Date] = @date
-	                AND FreeFrom <= @freeFrom
-	                AND FreeTo >= @freeTo",
-                    new
-                    {
-                        date.Date,
-                        freeFrom,
-                        freeTo
-                    });
-                return ids ?? new List<int>();
-            }
-        }
-
-        private TimeSpan GetEndTime(TimeSpan startTime, IEnumerable<WashOption> washOptions)
-        {
-            using(var context = Utilities.Sql())
-            {
-                var minutesRequired = CalculateTime(washOptions);
-                var rawEndTime = startTime + new TimeSpan(0, minutesRequired, 0);
-
-                var time = context.ExecuteScalar<TimeSpan>(@"
-                SELECT TOP 1
-                    [Time]
-                FROM
-                    EmployeeSchedule
-                WHERE
-                    [Time] >= @endTime
-                ORDER BY
-                    [Time]
-                ",
-                new
-                {
-                    endTime = rawEndTime
-                });
-                return time;
             }
         }
 

@@ -99,7 +99,7 @@ namespace CarWash.Services
             return shedules;
         }
 
-        public int CreateOrder(CreateOrderRequest request)
+        public Task<int> CreateOrder(CreateOrderRequest request)
         {
             throw new NotImplementedException();
         }
