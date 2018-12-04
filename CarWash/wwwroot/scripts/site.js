@@ -1,5 +1,5 @@
-﻿//const NO_API_WORK = true;
-const NO_API_WORK = false;
+﻿const NO_API_WORK = true;
+//const NO_API_WORK = false;
 
 const dayName = [
     "Sunday",
@@ -183,7 +183,7 @@ function changeCalendar() {
     for (i = today; i <= daysInMonth; i++) {
         now.setDate(i);
         if (i === today) {
-            html += `\n<td id="${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()}" class="day today selected">${dayName[now.getDay()]} ${now.getDate()}</td>`;
+            html += `\n<td id="${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()}" class="day selected">${dayName[now.getDay()]} ${now.getDate()}</td>`;
         }
         else {
             html += `\n<td id="${now.getFullYear()}.${now.getMonth() + 1}.${now.getDate()}" class="day">${dayName[now.getDay()]} ${now.getDate()}</td>`;
@@ -205,9 +205,8 @@ function changeCalendar() {
     html += `\n</tr>`;
     $("#dateList").html(html);
 
-    $(".today").addClass("day-selected");
     selectedDay = new Date();
-    selectedDayEl = $(".today").eq(0).attr("id");
+    selectedDayEl = $(".selected").eq(0).attr("id");
 
     /* Базовое время - 8:00 - 21:00
      * Интервал - 10 минут
@@ -233,12 +232,12 @@ function changeCalendar() {
     $(".day").hover(
         function (event) {
             if ($(this).attr("id") !== selectedDayEl) {
-                $(this).addClass("day-hover");
+                $(this).addClass("hovered");
             }
         },
         function (event) {
             if ($(this).attr("id") !== selectedDayEl) {
-                $(this).removeClass("day-hover");
+                $(this).removeClass("hovered");
             }
         }
     );
@@ -246,8 +245,7 @@ function changeCalendar() {
     $(".day").click(function (event) {
         event.stopPropagation();
 
-        $(".day").removeClass("day-selected").removeClass("day-hover").removeClass("selected");
-        $(this).addClass("day-selected");
+        $(".day").removeClass("selected").removeClass("hovered");
         $(this).addClass("selected");
         var date = $(this).attr("id").toString().split('.');
 
@@ -278,47 +276,40 @@ function changeCalendar() {
 
 
             for (i = 0; i < cells; i++) {
-                try {
-                    $(`#${box}${id + i * 10}`).addClass("selected");
-                    if ($(`#${box}${id + i * 10}`).hasClass("busy")) {
+                if ($(`#${box}${id + i * timeStepMinutes}`).attr("id") !== undefined) {
+                    $(`#${box}${id + i * timeStepMinutes}`).addClass("selected");
+                    if ($(`#${box}${id + i * timeStepMinutes}`).hasClass("busy")) {
                         selectionAvailable = false;
                         $(".selected").addClass("unavailable");
                     }
                 }
-                catch {
+                else {
                     selectionAvailable = false;
                     $(".selected").addClass("unavailable");
                 }
             }
+            if (!selectionAvailable) {
+                $(".selected").addClass("unavailable");
+            }
         },
         function (event) {
             event.stopPropagation();
+            if (totalTime !== 0) {
+                //var cells = 0;
+                //if (totalTime % timeStepMinutes !== 0) {
+                //    cells = Math.trunc((totalTime + timeStepMinutes) / timeStepMinutes);
+                //}
+                //else {
+                //    cells = Math.trunc(totalTime / timeStepMinutes);
+                //}
 
-            var cells = 0;
-            if (totalTime % timeStepMinutes !== 0) {
-                cells = Math.trunc((totalTime + timeStepMinutes) / timeStepMinutes);
+                //var box = $(this).attr("id").substr(0, 4);
+                //var id = parseInt($(this).attr("id").substr(4));
+
+                $(".selected").removeClass("unavailable").removeClass("selected");
+                selectionAvailable = true;
             }
-            else {
-                cells = Math.trunc(totalTime / timeStepMinutes);
-            }
-
-            var box = $(this).attr("id").substr(0, 4);
-            var id = parseInt($(this).attr("id").substr(4));
-
-
-            for (i = 0; i < cells; i++) {
-                try {
-                    $(`#${box}${id + i * 10}`).removeClass("selected").removeClass(".unavailbale");
-                    if ($(`#${box}${id + i * 10}`).hasClass("busy")) {
-                        selectionAvailable = true;
-                    }
-                }
-                catch {
-                    selectionAvailable = true;
-                }
-            }
-        }
-    );
+        });
     $(".free").click(function (event) {
         event.stopPropagation();
 
