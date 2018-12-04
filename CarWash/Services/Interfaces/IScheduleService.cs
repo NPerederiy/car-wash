@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using CarWash.Models;
 
 namespace CarWash.Services
@@ -12,6 +13,6 @@ namespace CarWash.Services
 
         IEnumerable<Schedule> GetSheduleForDay(GetScheduleForDayRequest request);
 
-        int CreateOrder(CreateOrderRequest request);
+        Task<int> CreateOrder(CreateOrderRequest request);
     }
 }
