@@ -121,27 +121,29 @@ var process = {
             });
         });
     },
-    sendRequest: function (data) {
+    sendRequest: function (data, url) {
         return $.ajax({
             type: "POST",
-            url: urls.createOrderUrl,
+            url: url,
             dataType: 'json',
             contentType: 'application/json',
             data: data ? JSON.stringify(data) : null
         }).fail(function (jqXHR, textStatus, errorThrown) {
-            console.error(errorThrown);
+            if (errorThrown !== "" && errorThrown !== undefined) {
+                console.error(errorThrown);
+            }
         });
     }
-}
+};
 
 function changeServices() {
-    if (NO_API_WORK) {
-        $.getJSON("src/services.json", function (data) {
-            process.optionsList(data);
-            //processOptions(data);
-        });
-        return;
-    }
+    //if (NO_API_WORK) {
+    //    $.getJSON("src/services.json", function (data) {
+    //        process.optionsList(data);
+    //        //processOptions(data);
+    //    });
+    //    return;
+    //}
     $.ajax({
         type: "GET",
         url: urls.optionsUrl,
@@ -353,13 +355,13 @@ function getAvailableDay(sender, event) {
         return;
     }
 
-    if (NO_API_WORK) {
-        $.getJSON("src/dates.json", function (data) {
-            process.availableDay(data);
-            //processAvailbaleDays(data);
-        });
-        return;
-    }
+    //if (NO_API_WORK) {
+    //    $.getJSON("src/dates.json", function (data) {
+    //        process.availableDay(data);
+    //        //processAvailbaleDays(data);
+    //    });
+    //    return;
+    //}
     var request = "?";
 
     for (i = 0; i <= selectedOptions.length; i++) {
@@ -392,39 +394,45 @@ function getDaySchedule(sender, event) {
         selectedDay = new Date(selectedDay);
     }
 
-    if (NO_API_WORK) {
-        $.getJSON("src/daySchedule.json", function (data) {
-            process.daySchedule(data);
-            //processDaySchedule(data);
-        });
-        return;
-    }
+    //if (NO_API_WORK) {
+    //    $.getJSON("src/daySchedule.json", function (data) {
+    //        process.daySchedule(data);
+    //        //processDaySchedule(data);
+    //    });
+    //    return;
+    //}
 
-    var request = "?";
-    for (i = 0; i <= selectedOptions.length; i++) {
-        if (options[selectedOptions[i]] !== undefined) {
-            request += `id=${selectedOptions[i]}&`;
-        }
-    }
+    //var request = "?";
+    //for (i = 0; i <= selectedOptions.length; i++) {
+    //    if (options[selectedOptions[i]] !== undefined) {
+    //        request += `id=${selectedOptions[i]}&`;
+    //    }
+    //}
 
     if (selectedOptions.length === 0) {
         $(".day").removeClass("day-available");
         return;
     }
 
-    request += `date=${selectedDay.getFullYear()}.${selectedDay.getMonth().toString().length < 2 ? "0" + selectedDay.getMonth().toString() : selectedDay.getMonth().toString()}.${selectedDay.getDate().toString().length < 2 ? "0" + selectedDay.getDate().toString() : selectedDay.getDate().toString()}`;
-    //sendRequest = sendRequest.substr(0, sendRequest.length - 1);
-    $.ajax({
-        type: "GET",
-        url: urls.dayScheduleUrl + request,
-        cache: false,
-        error: function (jqXHR, textStatus, errorThrown) {
-            alert("Something went wrong!");
-        },
-        success: function (data) {
-            process.daySchedule(data);
-            //processDaySchedule(data);
-        }
+    //request += `date=${selectedDay.getFullYear()}.${selectedDay.getMonth().toString().length < 2 ? "0" + selectedDay.getMonth().toString() : selectedDay.getMonth().toString()}.${selectedDay.getDate().toString().length < 2 ? "0" + selectedDay.getDate().toString() : selectedDay.getDate().toString()}`;
+    ////sendRequest = sendRequest.substr(0, sendRequest.length - 1);
+    //$.ajax({
+    //    type: "GET",
+    //    url: urls.dayScheduleUrl + request,
+    //    cache: false,
+    //    error: function (jqXHR, textStatus, errorThrown) {
+    //        alert("Something went wrong!");
+    //    },
+    //    success: function (data) {
+    //        process.daySchedule(data);
+    //        //processDaySchedule(data);
+    //    }
+    //});
+    var GetScheduleForDayRequest = {};
+    GetScheduleForDayRequest.Date = selectedDay;
+    GetScheduleForDayRequest.WashOptionIDs = selectedOptions;
+    process.sendRequest(GetScheduleForDayRequest, urls.dayScheduleUrl).done(function (data) {
+        console.log(data);
     });
 }
 
@@ -447,7 +455,7 @@ function createOrder() {
     CreateOrderRequest.Phone = $("#modalTel").val();
 
     //sendRequest(CreateOrderRequest).done(function (data) {
-    process.sendRequest(CreateOrderRequest).done(function (data) {
+    process.sendRequest(CreateOrderRequest, urls.createOrderUrl).done(function (data) {
         console.log(data);
     });
 }

@@ -88,7 +88,7 @@ namespace CarWash.Services
                     var boxShedule = new Schedule
                     {
                         BoxID = boxID,
-                        Date = request.Date,
+                        Date = request.Date.Date,
                         Time = time,
                         OrderID = nextValue < 2400 ? nextValue : 0,
                         EmployeeID = employeeID

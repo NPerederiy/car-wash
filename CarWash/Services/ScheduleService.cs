@@ -87,9 +87,8 @@ namespace CarWash.Services
             using(var context = Utilities.Sql())
             {
                 var schedules = context.Query<Schedule>(@"
-                SELECT 
+                SELECT DISTINCT
 	                b.BoxID
-	                ,e.EmployeeID
 	                ,b.[Date]
 	                ,b.[Time]
 	                ,b.OrderID
@@ -98,10 +97,13 @@ namespace CarWash.Services
 	                INNER JOIN EmployeeSchedule e
 	                ON b.[Date] = e.[Date]
 	                AND b.[Time] = e.[Time]
-	                AND e.[Date] = @requestedDate",
+	                AND e.[Date] = @requestedDate
+                ORDER BY
+                    b.BoxID, b.[Date], b.[Time]
+                    ",
                     param: new
                     {
-                        requestedDate = request.Date
+                        requestedDate = request.Date.ToLocalTime().Date
                     });
 
                 return schedules;
@@ -110,7 +112,7 @@ namespace CarWash.Services
 
         public int CreateOrder(CreateOrderRequest request)
         {
-            var startAt = request.Date.TimeOfDay;
+            var startAt = request.Date.ToLocalTime().TimeOfDay;
             var washOptions = GetWashOptions().Where(o => request.WashOptionIDs.Contains(o.OptionID));
             var timeEnd = GetEndTime(startAt, washOptions);
             var availableEmployees = GetAvailableEmployees(request.Date, startAt, timeEnd);

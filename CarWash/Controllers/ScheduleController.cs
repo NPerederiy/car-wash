@@ -39,18 +39,11 @@ namespace CarWash.Controllers
             return _scheduleService.GetAwailableDays(request);
         }
 
-        [HttpGet, Route("day-shedule")]
-        public GetScheduleForDayResponse GetSheduleForDay([FromQuery(Name = "id")]List<int> id, [FromQuery(Name = "date")] string date)
+        [HttpPost, Route("day-shedule")]
+        public IEnumerable<Schedule> GetSheduleForDay(GetScheduleForDayRequest request)
         {
-            GetScheduleForDayRequest request = new GetScheduleForDayRequest()
-            {
-                WashOptions = _scheduleService.GetWashOptions().Where((e) => id.IndexOf(e.OptionID) != -1),
-                Date = DateTime.ParseExact(date, "yyyy.MM.dd", System.Globalization.CultureInfo.InvariantCulture)
-            };
-            return new GetScheduleForDayResponse
-            {
-                BoxShedules = _scheduleService.GetSheduleForDay(request)
-            };
+            var schedule = _scheduleService.GetSheduleForDay(request);
+            return schedule;
         }
 
         [HttpPost, Route("create-order")]
