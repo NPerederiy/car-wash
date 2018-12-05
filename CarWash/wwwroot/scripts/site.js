@@ -116,8 +116,9 @@ var process = {
 
             var offset = (t.getHours() * 60 + t.getMinutes() - startTime.getHours() * 60 - startTime.getMinutes()) / timeStepMinutes;
 
-
-            $("#calendar").children().eq(offset).children().eq(item.boxID).removeClass("free").addClass("busy");
+            if (item.orderID !== null) {
+                $("#calendar").children().eq(offset).children().eq(item.boxID).removeClass("free").addClass("busy");
+            }
         });
     },
     sendRequest: function (data, url) {
@@ -148,23 +149,18 @@ function changeServices() {
 }
 
 function changeCalendar() {
-    var year = 0;
-    var month;
+    var now = new Date();
+    now.setDate(1);
 
-    var now = new Date();   // Визначуваний поточну дату.
-    now.setDate(1);   // Встановлюємо в змінній перше число поточного місяця.
+    var currentMonth = now.getMonth();
 
-    var dayOfWeek = now.getDay();   //Определяем день тижня.
+    now = new Date();
+    var today = now.getDate();
 
-    var currentMonth = now.getMonth();   // Дізнаємося місяць.
-
-    now = new Date();   // Одержуємо дату.
-    var today = now.getDate();   // Дізнаємося число.
-
-    var daysInMonth = 28;   // Встановлюємо мінімально можливе число днів в місяці (менше не буває).
-    while (currentMonth === now.getMonth())   // Перевіряємо в циклі, чи не змінився місяць при спробі встановити неможливе число.
-        now.setDate(++daysInMonth);   // Збільшуємо число.
-    --daysInMonth;//Получаем коректне число днів в місяці.
+    var daysInMonth = 28;
+    while (currentMonth === now.getMonth())
+        now.setDate(++daysInMonth);
+    --daysInMonth;
 
     var html = $("#calendar").html();
 
@@ -201,10 +197,6 @@ function changeCalendar() {
 
     selectedDay = new Date();
     selectedDayEl = $(".selected").eq(0).attr("id");
-
-    /* Базовое время - 8:00 - 21:00
-     * Интервал - 10 минут
-     * 13*6 ячеек */
 
     html = "";
     time = startTime;
@@ -316,7 +308,8 @@ function changeCalendar() {
             $("#modalBox").html(`Box#${selectedBox}`);
             $("#modalTime").html(`Time: ${selectedTime}`);
 
-            $(".registration").css({ visibility: "visible" });
+            //$(".registration").css({ visibility: "visible" });
+            $("#myModal").modal("show");
         }
     });
     getDaySchedule();
@@ -347,7 +340,6 @@ function getAvailableDay(sender, event) {
         success: function (data) {
             console.log(data);
             process.availableDay(data);
-            //processAvailbaleDays(data);
         }
     });
 }
@@ -386,15 +378,21 @@ function createOrder() {
 
     var CreateOrderRequest = {};
     CreateOrderRequest.WashOptionIDs = selectedOptions;
-    CreateOrderRequest.Date = selectedDay; //selectedDate;
+    CreateOrderRequest.Date = selectedDay;
     CreateOrderRequest.BoxID = boxID;
     CreateOrderRequest.Name = $("#modalName").val();
     CreateOrderRequest.Surname = $("#modalSurname").val();
     CreateOrderRequest.Phone = $("#modalTel").val();
 
-    process.sendRequest(CreateOrderRequest, urls.createOrderUrl).done(function (data) {
-        console.log(data);
-    });
+    helpers.markModalBusy();
+    process.sendRequest(CreateOrderRequest, urls.createOrderUrl)
+        .done(function (data) {
+            console.log(data);
+            helpers.releaseModal();
+        })
+        .fail(function (error) {
+            helpers.releaseModal();
+        });
 }
 
 function optionToggle(sender) {
@@ -425,3 +423,53 @@ function optionToggle(sender) {
     getAvailableDay();
     getDaySchedule();
 }
+
+var validation = {
+    name: function (sender) {
+        var name = $(sender).val();
+        for (i = 0; i <= 9; i++) {
+            if (name.indexOf(i.toString()) !== -1) {
+                name = name.split(i.toString()).join("");
+            }
+        }
+        $(sender).val(name);
+    },
+    phone: function (sender) {
+        const valid = "+0123456789";
+
+        var tel = $(sender).val();
+        for (i = 0; i < tel.length;) {
+            if (valid.indexOf(tel[i]) === -1) {
+                tel = tel.split(tel[i]).join("");
+            }
+            else {
+                i++;
+            }
+        }
+        if (tel.length > 11 && tel.indexOf("+") !== -1) {
+            tel = tel.substr(0, 11);
+        }
+        else {
+            tel = tel.substr(0, 10);
+        }
+
+        $(sender).val(tel);
+    }
+};
+
+var helpers = {
+    markModalBusy: function () {
+        $("#modalBody").addClass("blurred");
+        $(".modal-footer button").addClass("disabled");
+        $(".modal-footer button").attr("disabled", true);
+        $("#modalLoader").show();
+    },
+
+    releaseModal: function () {
+        $("#myModal").modal("hide");
+        $("#modalBody").removeClass("blurred");
+        $("#modalLoader").hide();
+        $(".modal-footer button").removeClass("disabled");
+        $(".modal-footer button").removeAttr("disabled", true);
+    }
+};
