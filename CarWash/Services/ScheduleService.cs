@@ -87,9 +87,8 @@ namespace CarWash.Services
             using(var context = Utilities.Sql())
             {
                 var schedules = context.Query<Schedule>(@"
-                SELECT 
+                SELECT DISTINCT
 	                b.BoxID
-	                ,e.EmployeeID
 	                ,b.[Date]
 	                ,b.[Time]
 	                ,b.OrderID
@@ -98,7 +97,10 @@ namespace CarWash.Services
 	                INNER JOIN EmployeeSchedule e
 	                ON b.[Date] = e.[Date]
 	                AND b.[Time] = e.[Time]
-	                AND e.[Date] = @requestedDate",
+	                AND e.[Date] = @requestedDate
+                ORDER BY
+                    b.BoxID, b.[Date], b.[Time]
+                    ",
                     param: new
                     {
                         requestedDate = request.Date.ToLocalTime().Date
