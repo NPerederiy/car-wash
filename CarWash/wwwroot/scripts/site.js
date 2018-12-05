@@ -148,23 +148,18 @@ function changeServices() {
 }
 
 function changeCalendar() {
-    var year = 0;
-    var month;
+    var now = new Date();
+    now.setDate(1);
 
-    var now = new Date();   // Визначуваний поточну дату.
-    now.setDate(1);   // Встановлюємо в змінній перше число поточного місяця.
+    var currentMonth = now.getMonth();
 
-    var dayOfWeek = now.getDay();   //Определяем день тижня.
+    now = new Date();
+    var today = now.getDate();
 
-    var currentMonth = now.getMonth();   // Дізнаємося місяць.
-
-    now = new Date();   // Одержуємо дату.
-    var today = now.getDate();   // Дізнаємося число.
-
-    var daysInMonth = 28;   // Встановлюємо мінімально можливе число днів в місяці (менше не буває).
-    while (currentMonth === now.getMonth())   // Перевіряємо в циклі, чи не змінився місяць при спробі встановити неможливе число.
-        now.setDate(++daysInMonth);   // Збільшуємо число.
-    --daysInMonth;//Получаем коректне число днів в місяці.
+    var daysInMonth = 28;
+    while (currentMonth === now.getMonth())
+        now.setDate(++daysInMonth);
+    --daysInMonth;
 
     var html = $("#calendar").html();
 
@@ -201,10 +196,6 @@ function changeCalendar() {
 
     selectedDay = new Date();
     selectedDayEl = $(".selected").eq(0).attr("id");
-
-    /* Базовое время - 8:00 - 21:00
-     * Интервал - 10 минут
-     * 13*6 ячеек */
 
     html = "";
     time = startTime;
@@ -347,7 +338,6 @@ function getAvailableDay(sender, event) {
         success: function (data) {
             console.log(data);
             process.availableDay(data);
-            //processAvailbaleDays(data);
         }
     });
 }
@@ -386,7 +376,7 @@ function createOrder() {
 
     var CreateOrderRequest = {};
     CreateOrderRequest.WashOptionIDs = selectedOptions;
-    CreateOrderRequest.Date = selectedDay; //selectedDate;
+    CreateOrderRequest.Date = selectedDay;
     CreateOrderRequest.BoxID = boxID;
     CreateOrderRequest.Name = $("#modalName").val();
     CreateOrderRequest.Surname = $("#modalSurname").val();

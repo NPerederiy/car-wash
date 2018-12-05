@@ -6,7 +6,11 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="src/main.css">
     <link rel="stylesheet" href="src/loader.css" />
-    <link rel="stylesheet" href="src/activities.css"     />
+    <link rel="stylesheet" href="src/activities.css" />
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
     <header>
@@ -48,6 +52,23 @@
             </table>
         </div>
         <div class="registration">
+            <div class="modal fade" id="myModal" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Modal Header</h4>
+                        </div>
+                        <div class="modal-body">
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default">Submit</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>    
+                </div>
+            </div>
             <form id="registration">
                 <table>
                     <thead>
@@ -79,7 +100,7 @@
                         </tr>
                         <tr>
                             <td>
-                                <input type="button" class="inputBtn" value="Submit" onclick="createOrder();"/>
+                                <input type="button" class="inputBtn" value="Submit" onclick="createOrder();" />
                             </td>
                             <td>
                                 <input type="button" class="inputBtn" value="Decline" onclick="$('.registration').css({ visibility: 'hidden' }); $('#modalName').value = ''; $('#modalSurame').value = ''; $('#modalTel').value = '';" />
@@ -90,11 +111,7 @@
             </form>
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
-            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-            crossorigin="anonymous"></script>
     <script src="scripts\site.js"></script>
-    <script src="scripts/httpclient.js"></script>
     <footer></footer>
 </body>
 </html>
