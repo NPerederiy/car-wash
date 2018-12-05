@@ -105,20 +105,19 @@ var process = {
         });
     },
     daySchedule: function (data) {
+        $(".busy").addClass("free").removeClass("busy");
+
         console.log(data);
         $.each(data, function (key, item) {
-            $.each(item, function (inKey, inItem) {
-                var time = inItem.time.substr(11, 5).split(":");
-                console.log(time);
-                var t = new Date();
-                t.setHours(time[0]);
-                t.setMinutes(time[1]);
-                console.log(t);
+            var time = item.time.split(":");
+            var t = new Date();
+            t.setHours(time[0]);
+            t.setMinutes(time[1]);
 
-                var offset = (t.getHours() * 60 + t.getMinutes() - startTime.getHours() * 60 - startTime.getMinutes()) / timeStepMinutes;
+            var offset = (t.getHours() * 60 + t.getMinutes() - startTime.getHours() * 60 - startTime.getMinutes()) / timeStepMinutes;
 
-                $("#calendar").children().eq(offset).children().eq(inItem.boxID + 1).removeClass("free").addClass("busy");
-            });
+
+            $("#calendar").children().eq(offset).children().eq(item.boxID).removeClass("free").addClass("busy");
         });
     },
     sendRequest: function (data, url) {
@@ -137,13 +136,6 @@ var process = {
 };
 
 function changeServices() {
-    if (NO_API_WORK) {
-        $.getJSON("src/services.json", function (data) {
-            process.optionsList(data);
-            //processOptions(data);
-        });
-        return;
-    }
     $.ajax({
         type: "GET",
         url: urls.optionsUrl,
@@ -297,18 +289,8 @@ function changeCalendar() {
         function (event) {
             event.stopPropagation();
             if (totalTime !== 0) {
-                //var cells = 0;
-                //if (totalTime % timeStepMinutes !== 0) {
-                //    cells = Math.trunc((totalTime + timeStepMinutes) / timeStepMinutes);
-                //}
-                //else {
-                //    cells = Math.trunc(totalTime / timeStepMinutes);
-                //}
 
-                //var box = $(this).attr("id").substr(0, 4);
-                //var id = parseInt($(this).attr("id").substr(4));
-
-                $(".selected").removeClass("unavailable").removeClass("selected");
+                $(".selected").not(".day").removeClass("unavailable").removeClass("selected");
                 selectionAvailable = true;
             }
         });
@@ -346,13 +328,6 @@ function getAvailableDay(sender, event) {
         return;
     }
 
-    if (NO_API_WORK) {
-        $.getJSON("src/dates.json", function (data) {
-            process.availableDay(data);
-            //processAvailbaleDays(data);
-        });
-        return;
-    }
     var request = "?";
 
     for (i = 0; i <= selectedOptions.length; i++) {
@@ -385,51 +360,17 @@ function getDaySchedule(sender, event) {
         selectedDay = new Date(selectedDay);
     }
 
-    //if (NO_API_WORK) {
-    //    $.getJSON("src/daySchedule.json", function (data) {
-    //        process.daySchedule(data);
-    //        //processDaySchedule(data);
-    //    });
-    //    return;
-    //}
-
-    //var request = "?";
-    //for (i = 0; i <= selectedOptions.length; i++) {
-    //    if (options[selectedOptions[i]] !== undefined) {
-    //        request += `id=${selectedOptions[i]}&`;
-    //    }
-    //}
-
     if (selectedOptions.length === 0) {
         $(".day").removeClass("day-available");
+        $(".busy").addClass("free").removeClass("busy");
         return;
     }
 
-    //request += `date=${selectedDay.getFullYear()}.${selectedDay.getMonth().toString().length < 2 ? "0" + selectedDay.getMonth().toString() : selectedDay.getMonth().toString()}.${selectedDay.getDate().toString().length < 2 ? "0" + selectedDay.getDate().toString() : selectedDay.getDate().toString()}`;
-    //$.ajax({
-    //    type: "POST",
-    //    url: urls.dayScheduleUrl,
-    //    data: {
-    //        Date: selectedDay,
-    //        WashOptions: selectedOptions 
-    //    },
-    //    cache: false,
-    //    error: function (jqXHR, textStatus, errorThrown) {
-    //        console.log(jqXHR);
-    //        console.log(textStatus);
-    //        console.log(errorThrown);
-    //        alert("Something went wrong!");
-    //    },
-    //    success: function (data) {
-    //        process.daySchedule(data);
-    //        //processDaySchedule(data);
-    //    }
-    //});
     var GetScheduleForDayRequest = {};
     GetScheduleForDayRequest.Date = selectedDay;
     GetScheduleForDayRequest.WashOptionIDs = selectedOptions;
     process.sendRequest(GetScheduleForDayRequest, urls.dayScheduleUrl).done(function (data) {
-        console.log(data);
+        process.daySchedule(data);
     });
 }
 

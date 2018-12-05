@@ -166,7 +166,7 @@ table.schedule div {
     height: 30px;
     user-select: none;
     border-radius: 5px;
-    border: 0px solid rgb(30, 0, 230);
+    border: 0px solid rgb(30, 180, 230);
     /*color: rgb(105, 171, 255);*/
     color: white;
     cursor: pointer;
@@ -180,24 +180,13 @@ table.schedule div {
 }
 .date {
     width: 90px;
-    /*height: 14.28%;*/
     text-align: center;
     user-select: none;
-    /*border-radius: 0px 0px 5px 0px;*/
     border-radius: 5px;
     overflow-x: auto;
     overflow-y: auto;
     font-weight: bold;
 }
-/*.today {
-    color: rgb(195, 195, 205);
-    font-size: 20px;
-}*/
-/*.mainTable .today {
-    color: darkseagreen;
-    padding: 0px;
-}*/
-
 .dayschedule {
     height: 100%;   
     margin: 0px;

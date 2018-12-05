@@ -7,9 +7,10 @@ namespace CarWash.Models
 {
     public class GetScheduleForDayRequest
     {
-        private DateTime _date;
-        public IEnumerable<int> WashOptionIDs { get; set; }
-        public DateTime Date {
+        private DateTimeOffset _date;
+
+        public IEnumerable<WashOption> WashOptions { get; set; }
+        public DateTimeOffset Date {
             get
             {
                 return _date.Date;

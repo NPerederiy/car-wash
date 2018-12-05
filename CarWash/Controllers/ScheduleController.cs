@@ -36,15 +36,14 @@ namespace CarWash.Controllers
             {
                 WashOptions = _scheduleService.GetWashOptions().Where(o => id.Contains(o.OptionID))
             };
-            var response = _scheduleService.GetAwailableDays(request);
-            return response;
+            return _scheduleService.GetAwailableDays(request);
         }
 
         [HttpPost, Route("day-shedule")]
         public IEnumerable<Schedule> GetSheduleForDay(GetScheduleForDayRequest request)
         {
-            var response = _scheduleService.GetSheduleForDay(request);
-            return response;
+            var schedule = _scheduleService.GetSheduleForDay(request);
+            return schedule;
         }
 
         [HttpPost, Route("create-order")]

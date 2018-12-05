@@ -49,21 +49,21 @@ namespace CarWash.Services
                 throw new ArgumentException("At least one option should be specified");
             var days = new List<DateTime>();
             var now = DateTime.Now;
-            if(request.WashOptions.Count() == 1)
+            if (request.WashOptions.Count() == 1)
             {
-                for(var i = 0; i < 31; i++)
+                for (var i = 0; i < 31; i++)
                 {
                     days.Add(new DateTime(now.Year, now.Month, now.Day));
                 }
             }
-            else if(request.WashOptions.Count() < 3)
+            else if (request.WashOptions.Count() < 3)
             {
-                for (var i = 0; i < 31; i+= 2)
+                for (var i = 0; i < 31; i += 2)
                 {
                     days.Add(new DateTime(now.Year, now.Month, now.Day));
                 }
             }
-            else 
+            else
             {
                 for (var i = 0; i < 31; i += 5)
                 {
@@ -81,14 +81,14 @@ namespace CarWash.Services
             var random = new Random();
             for (var boxID = 0; boxID < 4; boxID++)
             {
-                for(var time = startTime; time <= endTime; time = time += new TimeSpan(0, 15, 0))
+                for (var time = startTime; time <= endTime; time = time += new TimeSpan(0, 15, 0))
                 {
                     var nextValue = random.Next(5000);
                     var employeeID = random.Next(10);
                     var boxShedule = new Schedule
                     {
                         BoxID = boxID,
-                        Date = request.Date,
+                        Date = request.Date.Date,
                         Time = time,
                         OrderID = nextValue < 2400 ? nextValue : 0,
                         EmployeeID = employeeID
@@ -99,7 +99,7 @@ namespace CarWash.Services
             return shedules;
         }
 
-        public Task<int> CreateOrder(CreateOrderRequest request)
+        public int CreateOrder(CreateOrderRequest request)
         {
             throw new NotImplementedException();
         }
