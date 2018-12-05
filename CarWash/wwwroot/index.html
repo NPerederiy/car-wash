@@ -51,64 +51,35 @@
                 </tbody>
             </table>
         </div>
-        <div class="registration">
-            <div class="modal fade" id="myModal" role="dialog">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title">Modal Header</h4>
-                        </div>
-                        <div class="modal-body">
-
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default">Submit</button>
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                        </div>
-                    </div>    
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 id="modalHeader" class="modal-title">Book:</h4>
+                    </div>
+                    <div class="modal-body">
+                        <span id="modalBox" class="label label-info">Box#</span>
+                        <span id="modalTime" class="label label-info">Time</span>
+                        <form id="registration">
+                            <div class="form-group form-group-lg">
+                                <div class="well">
+                                    <label for="modalName">Name:</label>
+                                    <input type="text" class="form-control" id="modalName" required onkeyup='validation.name("#modalName");'>
+                                    <label for="modalSurname">Surname:</label>
+                                    <input type="text" class="form-control" id="modalSurname" required onkeyup='validation.name("#modalSurname");'>
+                                    <label for="modalTel">Phone number:</label>
+                                    <input type="tel" class="form-control" id="modalTel" required onkeyup='validation.phone("#modalTel");'>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" onclick="createOrder();">Submit</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    </div>
                 </div>
             </div>
-            <form id="registration">
-                <table>
-                    <thead>
-                        <tr>
-                            <td id="modalHeader" class="registration" colspan="2">
-                                Book:
-                            </td>
-                        </tr>
-                        <tr>
-                            <td id="modalBox">Box#</td>
-                            <td id="modalTime">Time</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colspan="2">
-                                <input id="modalName" required class="inputField" type="text" placeholder="Name" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">
-                                <input id="modalSurname" required class="inputField" type="text" placeholder="Surname" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">
-                                <input id="modalTel" required class="inputField" type="tel" placeholder="Phone number" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <input type="button" class="inputBtn" value="Submit" onclick="createOrder();" />
-                            </td>
-                            <td>
-                                <input type="button" class="inputBtn" value="Decline" onclick="$('.registration').css({ visibility: 'hidden' }); $('#modalName').value = ''; $('#modalSurame').value = ''; $('#modalTel').value = '';" />
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </form>
         </div>
     </div>
     <script src="scripts\site.js"></script>
