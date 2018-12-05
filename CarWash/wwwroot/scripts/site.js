@@ -105,20 +105,19 @@ var process = {
         });
     },
     daySchedule: function (data) {
+        $(".busy").addClass("free").removeClass("busy");
+
         console.log(data);
         $.each(data, function (key, item) {
-            $.each(item, function (inKey, inItem) {
-                var time = inItem.time.substr(11, 5).split(":");
-                console.log(time);
-                var t = new Date();
-                t.setHours(time[0]);
-                t.setMinutes(time[1]);
-                console.log(t);
+            var time = item.time.split(":");
+            var t = new Date();
+            t.setHours(time[0]);
+            t.setMinutes(time[1]);
 
-                var offset = (t.getHours() * 60 + t.getMinutes() - startTime.getHours() * 60 - startTime.getMinutes()) / timeStepMinutes;
+            var offset = (t.getHours() * 60 + t.getMinutes() - startTime.getHours() * 60 - startTime.getMinutes()) / timeStepMinutes;
 
-                $("#calendar").children().eq(offset).children().eq(inItem.boxID + 1).removeClass("free").addClass("busy");
-            });
+
+            $("#calendar").children().eq(offset).children().eq(item.boxID).removeClass("free").addClass("busy");
         });
     },
     sendRequest: function (data, url) {
