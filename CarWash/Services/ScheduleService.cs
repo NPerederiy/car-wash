@@ -110,7 +110,7 @@ namespace CarWash.Services
 
         public int CreateOrder(CreateOrderRequest request)
         {
-            var startAt = request.Date.TimeOfDay;
+            var startAt = request.Date.ToLocalTime().TimeOfDay;
             var washOptions = GetWashOptions().Where(o => request.WashOptionIDs.Contains(o.OptionID));
             var timeEnd = GetEndTime(startAt, washOptions);
             var availableEmployees = GetAvailableEmployees(request.Date, startAt, timeEnd);
