@@ -101,7 +101,7 @@ namespace CarWash.Services
 	                AND e.[Date] = @requestedDate",
                     param: new
                     {
-                        requestedDate = request.Date
+                        requestedDate = request.Date.ToLocalTime().Date
                     });
 
                 return schedules;
