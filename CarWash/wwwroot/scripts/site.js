@@ -384,9 +384,15 @@ function createOrder() {
     CreateOrderRequest.Surname = $("#modalSurname").val();
     CreateOrderRequest.Phone = $("#modalTel").val();
 
-    process.sendRequest(CreateOrderRequest, urls.createOrderUrl).done(function (data) {
-        console.log(data);
-    });
+    helpers.markModalBusy();
+    process.sendRequest(CreateOrderRequest, urls.createOrderUrl)
+        .done(function (data) {
+            console.log(data);
+            helpers.releaseModal();
+        })
+        .fail(function (error) {
+            helpers.releaseModal();
+        });
 }
 
 function optionToggle(sender) {
@@ -432,7 +438,7 @@ var validation = {
         const valid = "+0123456789";
 
         var tel = $(sender).val();
-        for (i = 0; i < tel.length; ) {
+        for (i = 0; i < tel.length;) {
             if (valid.indexOf(tel[i]) === -1) {
                 tel = tel.split(tel[i]).join("");
             }
@@ -449,4 +455,21 @@ var validation = {
 
         $(sender).val(tel);
     }
-}
+};
+
+var helpers = {
+    markModalBusy: function () {
+        $("#modalBody").addClass("blurred");
+        $(".modal-footer button").addClass("disabled");
+        $(".modal-footer button").attr("disabled", true);
+        $("#modalLoader").show();
+    },
+
+    releaseModal: function () {
+        $("#myModal").modal("hide");
+        $("#modalBody").removeClass("blurred");
+        $("#modalLoader").hide();
+        $(".modal-footer button").removeClass("disabled");
+        $(".modal-footer button").removeAttr("disabled", true);
+    }
+};

@@ -354,3 +354,17 @@ td.registration {
 .schedule::-webkit-scrollbar-thumb:hover {
     background: #dddddd;
 }
+
+.blurred {
+    filter: blur(4px);
+}
+
+.modal .modal-loader {
+    position: absolute;
+    left: 40%;
+    top: 30%;
+}
+
+.modal-loader-parent {
+    position: relative;
+}
