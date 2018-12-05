@@ -1,13 +1,6 @@
 ﻿.option-hover {
     background-color: rgba(0,0,0,0.5);
 }
-.day-hover {
-    background-color: rgba(0,206,209,0.35);
-}
-.day-selected {
-    background-color: rgb(0,206,209);
-    color: #ffffff;
-}
 .day-available {
     border-width: 1px;
 }
