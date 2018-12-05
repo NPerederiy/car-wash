@@ -334,6 +334,10 @@ td.registration {
     align-self: center;
     vertical-align: middle;
 }
+#modalHeader {
+    color: black;
+}
+
 .schedule::-webkit-scrollbar {
     width: 5px;
 }

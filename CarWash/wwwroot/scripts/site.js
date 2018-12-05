@@ -318,7 +318,8 @@ function changeCalendar() {
             $("#modalBox").html(`Box#${selectedBox}`);
             $("#modalTime").html(`Time: ${selectedTime}`);
 
-            $(".registration").css({ visibility: "visible" });
+            //$(".registration").css({ visibility: "visible" });
+            $("#myModal").modal("show");
         }
     });
     getDaySchedule();
@@ -426,4 +427,37 @@ function optionToggle(sender) {
     total.html(`Total: ${totalPrice.toFixed(1)}$ - ${totalTime.toFixed(1)} min`);
     getAvailableDay();
     getDaySchedule();
+}
+
+var validation = {
+    name: function (sender) {
+        var name = $(sender).val();
+        for (i = 0; i <= 9; i++) {
+            if (name.indexOf(i.toString()) !== -1) {
+                name = name.split(i.toString()).join("");
+            }
+        }
+        $(sender).val(name);
+    },
+    phone: function (sender) {
+        const valid = "+0123456789";
+
+        var tel = $(sender).val();
+        for (i = 0; i < tel.length; ) {
+            if (valid.indexOf(tel[i]) === -1) {
+                tel = tel.split(tel[i]).join("");
+            }
+            else {
+                i++;
+            }
+        }
+        if (tel.length > 11 && tel.indexOf("+") !== -1) {
+            tel = tel.substr(0, 11);
+        }
+        else {
+            tel = tel.substr(0, 10);
+        }
+
+        $(sender).val(tel);
+    }
 }
