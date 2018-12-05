@@ -1,5 +1,5 @@
-﻿const NO_API_WORK = true;
-//const NO_API_WORK = false;
+﻿//const NO_API_WORK = true;
+const NO_API_WORK = false;
 
 const dayName = [
     "Sunday",
