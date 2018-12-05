@@ -171,26 +171,22 @@ table.schedule div {
     color: white;
     cursor: pointer;
 }
+.selected {
+    background-color: rgb(93, 148, 184);
+    font-size: 18px;
+}
+.hovered {
+    background-color: rgba(80, 148, 184,0.35);
+}
 .date {
     width: 90px;
-    /*height: 14.28%;*/
     text-align: center;
     user-select: none;
-    /*border-radius: 0px 0px 5px 0px;*/
     border-radius: 5px;
     overflow-x: auto;
     overflow-y: auto;
     font-weight: bold;
 }
-.today {
-    color: rgb(195, 195, 205);
-    font-size: 20px;
-}
-/*.mainTable .today {
-    color: darkseagreen;
-    padding: 0px;
-}*/
-
 .dayschedule {
     height: 100%;   
     margin: 0px;
@@ -234,10 +230,6 @@ table.schedule div {
 }
 .free:nth-of-type(4n+5) {
     background-color: #5f9ea0;
-}
-.selected {
-    background-color: rgb(95, 208, 160);
-    border-radius: 5px;
 }
 .busy.selected:nth-of-type(4n+2) {
     background-color: rgba(100, 50, 50, 0.45);
