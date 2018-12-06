@@ -87,17 +87,18 @@ namespace CarWash.Services
             using(var context = Utilities.Sql())
             {
                 var schedules = context.Query<Schedule>(@"
-                SELECT DISTINCT
+                SELECT
 	                b.BoxID
 	                ,b.[Date]
 	                ,b.[Time]
 	                ,b.OrderID
+                    ,e.EmployeeID
                 FROM
 	                BoxSchedule b
-	                INNER JOIN EmployeeSchedule e
+	                LEFT JOIN EmployeeSchedule e
 	                ON b.[Date] = e.[Date]
 	                AND b.[Time] = e.[Time]
-	                AND e.[Date] = @requestedDate
+	                AND b.[Date] = @requestedDate
                 ORDER BY
                     b.BoxID, b.[Date], b.[Time]
                     ",

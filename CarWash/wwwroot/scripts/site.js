@@ -116,11 +116,13 @@ var process = {
 
             var offset = (t.getHours() * 60 + t.getMinutes() - startTime.getHours() * 60 - startTime.getMinutes()) / timeStepMinutes;
 
-            if (item.orderID !== null) {
+            if (item.orderID != null) {
                 $("#calendar").children().eq(offset).children().eq(item.boxID).removeClass("free").addClass("busy");
             }
         });
     },
+
+
     sendRequest: function (data, url) {
         return $.ajax({
             type: "POST",

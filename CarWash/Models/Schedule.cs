@@ -13,5 +13,11 @@ namespace CarWash.Models
         public int? OrderID { get; set; }
         public DateTime Date { get; set; }
         public TimeSpan Time { get; set; }
+        public bool IsFree {
+            get
+            {
+                return EmployeeID == null && OrderID == null;
+            }
+        }
     }
 }
