@@ -93,6 +93,7 @@ var process = {
 
         div.html(inner);
     },
+
     availableDay: function (data) {
         $(".day").removeClass("day-available");
         var days = $(".day");
@@ -104,6 +105,7 @@ var process = {
             }
         });
     },
+
     daySchedule: function (data) {
         $(".busy").addClass("free").removeClass("busy");
 
@@ -116,12 +118,25 @@ var process = {
 
             var offset = (t.getHours() * 60 + t.getMinutes() - startTime.getHours() * 60 - startTime.getMinutes()) / timeStepMinutes;
 
-            if (item.orderID != null) {
+            if (item.orderID !== null) {
                 $("#calendar").children().eq(offset).children().eq(item.boxID).removeClass("free").addClass("busy");
             }
         });
+        this.clearAvailableTime();
     },
 
+    clearAvailableTime: function () {
+        var n = new Date();
+
+        var offset = Math.round((n.getHours() * 60 + n.getMinutes() - startTime.getHours() * 60 - startTime.getMinutes()) / timeStepMinutes);
+
+        for (i = 0; i <= offset; i++) {
+            $("#calendar").children().eq(i).children().eq(1).removeClass("free").addClass("busy");
+            $("#calendar").children().eq(i).children().eq(2).removeClass("free").addClass("busy");
+            $("#calendar").children().eq(i).children().eq(3).removeClass("free").addClass("busy");
+            $("#calendar").children().eq(i).children().eq(4).removeClass("free").addClass("busy");
+        }
+    },
 
     sendRequest: function (data, url) {
         return $.ajax({
@@ -201,7 +216,7 @@ function changeCalendar() {
     selectedDayEl = $(".selected").eq(0).attr("id");
 
     html = "";
-    time = startTime;
+    time = new Date(startTime);
     while (time.getHours() < endTime.getHours()) {
         html += `\n<tr><td class="time">` + 
             `${time.getHours() < 10 ? "0" + time.getHours() : time.getHours()}:` +
@@ -314,6 +329,8 @@ function changeCalendar() {
             $("#myModal").modal("show");
         }
     });
+    process.clearAvailableTime();
+    setInterval(process.clearAvailableTime(), 1000);
     getDaySchedule();
 }
 
@@ -322,7 +339,6 @@ function getAvailableDay(sender, event) {
         $(".day").removeClass("day-available");
         return;
     }
-
     var request = "?";
 
     for (i = 0; i <= selectedOptions.length; i++) {
@@ -357,6 +373,7 @@ function getDaySchedule(sender, event) {
     if (selectedOptions.length === 0) {
         $(".day").removeClass("day-available");
         $(".busy").addClass("free").removeClass("busy");
+        process.clearAvailableTime();
         return;
     }
 
@@ -391,6 +408,8 @@ function createOrder() {
         .done(function (data) {
             console.log(data);
             helpers.releaseModal();
+            getDaySchedule();
+            helpers.thankModalOpen(data);
         })
         .fail(function (error) {
             helpers.releaseModal();
@@ -419,6 +438,13 @@ function optionToggle(sender) {
         totalTime -= options[id].time;
 
         $(sender).removeClass("checked");
+    }
+
+    if (selectedOptions.length > 0) {
+        $(".free").addClass("pointable");
+    }
+    else {
+        $(".pointable").removeClass("pointable");
     }
 
     total.html(`Total: ${totalPrice.toFixed(1)}$ - ${totalTime.toFixed(1)} min`);
@@ -473,5 +499,13 @@ var helpers = {
         $("#modalLoader").hide();
         $(".modal-footer button").removeClass("disabled");
         $(".modal-footer button").removeAttr("disabled", true);
+    },
+
+    thankModalOpen: function (orderID) {
+        $("#thankID").text(`${orderID}`);
+        $("#thankDate").text(`${selectedDay.getDate()}.${selectedDay.getMonth()}.${selectedDay.getFullYear()}`);
+        $("#thankTime").text(`${selectedTime}`);
+        $("#thankBox").text(`${selectedBox}`);
+        $("#thankModal").modal("show");
     }
 };

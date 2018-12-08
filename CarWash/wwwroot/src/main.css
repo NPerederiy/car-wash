@@ -217,7 +217,6 @@ table.schedule div {
     border-radius: 5px;
     margin-left: 3px;
     margin-right: 3px;
-    cursor: pointer;
 }
 .free:nth-of-type(4n+2) {
     background-color: rgba(95, 158, 160, 0.45);
@@ -266,6 +265,9 @@ table.schedule div {
 }
 .free.selected.unavailable:nth-of-type(4n+5) {
     background-color: rgb(145, 158, 160);
+}
+.pointable {
+    cursor: pointer;
 }
 div.registration {
     visibility: hidden;

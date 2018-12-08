@@ -14,7 +14,7 @@
 </head>
 <body>
     <header>
-        <img class="logo" src="src\donut-logo.png" />
+        <img class="logo" src="src\donut-logo.png" onclick="helpers.thankModalOpen(1);"/>
         <h1 class="title">DoNuts Car Wash</h1>
     </header>
     <div class="main">
@@ -77,6 +77,33 @@
                     <div class="loader modal-loader" id="modalLoader" style="display:none;" ></div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default btn-primary" onclick="createOrder();">Submit</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="thankModal" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 style="color: black;" class="modal-heder">Thank you for your order!</h4>
+                    </div>
+                    <div class="modal-body" style="color: black;">
+                        <form class="form-horizontal">
+                            <div class="form-group">    
+                                <label class="control-label col-sm-6" for="thankID">Order:</label>
+                                <p id="thankID" class="form-control-static col-sm-6"></p>
+                                <label class="control-label col-sm-6" for="thankID">Date:</label>
+                                <p id="thankDate" class="form-control-static col-sm-6"></p>
+                                <label class="control-label col-sm-6" for="thankID">Time:</label>
+                                <p id="thankTime" class="form-control-static col-sm-6"></p>
+                                <label class="control-label col-sm-6" for="thankID">Box #</label>
+                                <p id="thankBox" class="form-control-static col-sm-6"></p>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     </div>
                 </div>
