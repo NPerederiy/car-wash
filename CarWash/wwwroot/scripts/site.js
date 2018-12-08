@@ -330,7 +330,7 @@ function changeCalendar() {
         }
     });
     process.clearAvailableTime();
-    setInterval(process.clearAvailableTime(), 1000);
+    setInterval(process.clearAvailableTime(),   1000);
     getDaySchedule();
 }
 
